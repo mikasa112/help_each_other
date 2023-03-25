@@ -1,0 +1,14 @@
+#编译后的文件夹
+build/
+#gradle
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+settings.gradle
+#idea的配置啥的
+.idea/
+#不需要
+*.iml
+#logs
+logs/

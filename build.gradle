@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.4'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group 'org.help'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+    //spring boot web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    //spring security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    //spring data redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    //参数验证
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //单元测试
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    //热部署
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    //mybatis-plus
+    implementation group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.5.3'
+    //mysql驱动
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    //lombok插件
+    implementation 'org.projectlombok:lombok:1.18.26'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    //redis对象池
+    implementation group: 'org.apache.commons', name: 'commons-pool2', version: '2.11.1'
+    //google的java工具包
+    implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
+    //hutool-all工具包
+    implementation group: 'cn.hutool', name: 'hutool-all', version: '5.8.15'
+    //fastjson
+    implementation group: 'com.alibaba.fastjson2', name: 'fastjson2', version: '2.0.23'
+    //jwt
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+    //Servlet
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
