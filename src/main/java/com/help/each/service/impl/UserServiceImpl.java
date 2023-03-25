@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.entity.User;
 import com.help.each.mapper.UserMapper;
 import com.help.each.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 
 /**
  * @author Yuanan
@@ -12,5 +14,6 @@ import org.springframework.stereotype.Service;
  * @description 用户服务实现类
  */
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 }
