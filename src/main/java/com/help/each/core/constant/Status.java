@@ -23,6 +23,7 @@ public enum Status implements IStatus {
     TOKEN_PARSE_ERROR(5002, "token解析失败,请重新登录"),
     USERNAME_PASSWORD_ERROR(5003, "用户名或密码错误"),
     TOKEN_OUT_OF_CTRL(5003, "当前用户已在别处登录，请尝试更改密码或重新登录！"),
+    USERNAME_ALREADY_EXISTS(5004, "当前用户名已存在，请重新输入"),
 
     ARTICLE_NOT_FOUND(6001, "文章未找到"),
     ADD_ARTICLE_FAILED(6002, "添加文章失败"),

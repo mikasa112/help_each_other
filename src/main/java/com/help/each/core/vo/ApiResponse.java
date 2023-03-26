@@ -110,4 +110,16 @@ public class ApiResponse implements Serializable {
         response.getWriter().flush();
     }
 
+    /**
+     * 根据service返回的状态去选择响应
+     *
+     * @param bool      service返回的状态
+     * @param sucMsg    消息
+     * @param errStatus 失败时的状态
+     */
+    public static ApiResponse PrintlnApiResponse(boolean bool, String sucMsg, Status errStatus) {
+        if (bool)
+            return OfMessage(sucMsg);
+        return OfStatus(errStatus);
+    }
 }

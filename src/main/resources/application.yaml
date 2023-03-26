@@ -34,3 +34,23 @@ mybatis-plus:
 logging:
   level:
     root: info
+app:
+  config:
+    #每页大小
+    pageSize: 10
+    jwt:
+      #token头
+      tokenHeader: Authorization
+      #生存时间
+      ttl: 600000 #10分钟
+      #记住登录后的生存时间
+      remember: 604800000 #7天
+    ignores:
+      # 需要过滤的 post 请求
+      post:
+        - "/api/auth/login"
+        - "/api/auth/logout"
+        - "/api/auth/register"
+      # 需要过滤的请求，不限方法
+      pattern:
+        - "/test/*"
