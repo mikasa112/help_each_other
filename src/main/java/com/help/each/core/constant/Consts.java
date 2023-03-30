@@ -11,4 +11,14 @@ public interface Consts {
      * 存入redis的token的前缀
      */
     String REDIS_JWT_KEY_PREFIX = "security:jwt:";
+
+    /*
+     * 升序
+     */
+    String ASC_ORDER = "asc";
+
+    /*
+     * 降序
+     */
+    String DESC_ORDER = "desc";
 }

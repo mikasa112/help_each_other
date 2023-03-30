@@ -11,6 +11,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -54,6 +55,9 @@ public class GlobalExceptionHandler {
         } else if (e instanceof HttpMessageNotReadableException) {
             log.error("【全局异常拦截】HttpMessageNotReadableException: 错误信息 {}", e.getMessage());
             return ApiResponse.OfStatus(Status.PARAM_NOT_NULL);
+        } else if (e instanceof HttpMediaTypeNotSupportedException) {
+            log.error("【全局异常拦截】HttpMediaTypeNotSupportedException: 错误信息 {}", e.getMessage());
+            return ApiResponse.OfStatus(Status.HTTP_BAD_METHOD);
         } else if (e instanceof BadCredentialsException) {
             log.error("【全局异常拦截】BadCredentialsException: 错误信息 {}", e.getMessage());
             return ApiResponse.OfStatus(Status.USERNAME_PASSWORD_ERROR);

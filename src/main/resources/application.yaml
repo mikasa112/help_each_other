@@ -1,6 +1,12 @@
 server:
   port: 8080
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+      location: E:\code\Java\help_each_other\images
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/help_other?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
     username: root
@@ -38,6 +44,7 @@ app:
   config:
     #每页大小
     pageSize: 10
+    imageUrl: http://localhost/images/
     jwt:
       #token头
       tokenHeader: Authorization
@@ -51,6 +58,7 @@ app:
         - "/api/auth/login"
         - "/api/auth/logout"
         - "/api/auth/register"
+#        - "/api/v1/upload"
       # 需要过滤的请求，不限方法
       pattern:
         - "/test/*"

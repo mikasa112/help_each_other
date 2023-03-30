@@ -57,8 +57,7 @@ public class WebSecurityConfig {
                 .disable();
         //自定义没有权限时或者没有登录时（Token过期时）的返回结果
         http.exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler())
-                .authenticationEntryPoint(authenticationEntryPoint());
+                .accessDeniedHandler(accessDeniedHandler());
         return http.build();
     }
 
@@ -68,8 +67,9 @@ public class WebSecurityConfig {
         return (request, response, accessDeniedException) -> ApiResponse.PrintlnApiResponse(response, Status.ACCESS_DENIED);
     }
 
-    //未登录或者Token过期时的返回结果
+    //未登录或者Token过期时的返回结果 todo 不能在使用自定义过滤规则时使用这个东西
     @Bean
+    @Deprecated
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return ((request, response, authException) -> ApiResponse.PrintlnApiResponse(response, Status.UNAUTHORIZED));
     }

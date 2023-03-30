@@ -24,7 +24,8 @@ public enum Status implements IStatus {
     USERNAME_PASSWORD_ERROR(5003, "用户名或密码错误"),
     TOKEN_OUT_OF_CTRL(5003, "当前用户已在别处登录，请尝试更改密码或重新登录！"),
     USERNAME_ALREADY_EXISTS(5004, "当前用户名已存在，请重新输入"),
-
+    FILE_CONTENT_IS_EMPTY(5005, "文件内容为空"),
+    FILE_UPLOAD_FAILED(5006, "文件上传失败"),
     ARTICLE_NOT_FOUND(6001, "文章未找到"),
     ADD_ARTICLE_FAILED(6002, "添加文章失败"),
     DELETE_ARTICLE_FAILED(6003, "删除文章失败"),

@@ -26,19 +26,16 @@ public class AuthController {
     final AuthenticationService service;
 
     @PostMapping("login")
-    @ResponseBody
     public ApiResponse login(@RequestBody @Valid AuthenticationRequest request) {
         return ApiResponse.OfSuccess(service.authenticate(request));
     }
 
 
     @PostMapping("register")
-    @ResponseBody
     public ApiResponse register(@RequestBody @Valid RegisterRequest request) {
         return ApiResponse.PrintlnApiResponse(service.register(request), "注册成功", Status.ERROR);
     }
 
-    @ResponseBody
     @PostMapping("logout")
     public ApiResponse logout(HttpServletRequest request) {
         return ApiResponse.PrintlnApiResponse(service.logout(request), "退出登录成功", Status.ERROR);

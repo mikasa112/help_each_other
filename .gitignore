@@ -12,3 +12,4 @@ settings.gradle
 *.iml
 #logs
 logs/
+images/
