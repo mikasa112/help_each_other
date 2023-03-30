@@ -2,10 +2,6 @@
 build/
 #gradle
 .gradle/
-gradle/
-gradlew
-gradlew.bat
-settings.gradle
 #idea的配置啥的
 .idea/
 #不需要
