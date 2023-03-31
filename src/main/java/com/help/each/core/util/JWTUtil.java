@@ -154,7 +154,7 @@ public class JWTUtil {
      */
     public String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader(appConfig.getJwt().getTokenHeader());
-        if (StrUtil.isNotBlank(bearerToken) && bearerToken.startsWith("Bearer ")) {
+        if (StrUtil.isNotBlank(bearerToken) && bearerToken.startsWith(Consts.Bearer)) {
             return bearerToken.substring(7);
         }
         return null;

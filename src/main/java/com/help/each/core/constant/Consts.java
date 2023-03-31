@@ -21,4 +21,14 @@ public interface Consts {
      * 降序
      */
     String DESC_ORDER = "desc";
+
+    /*
+     * 默认以id排序
+     */
+    String SORT_BY="id";
+
+    /*
+     * 令牌开头
+     */
+    String Bearer = "Bearer ";
 }

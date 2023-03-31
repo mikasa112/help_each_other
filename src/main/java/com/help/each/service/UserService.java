@@ -20,4 +20,26 @@ public interface UserService extends IService<User> {
      * @return 分页 {@link PageResult}
      */
     PageResult<User> list(Long currentPage, Long pageSize, String sortBy, String order);
+
+    /**
+     * 获取用户的信息从uuid
+     * @param uuid
+     * @return
+     */
+    User getUserInfoByUuid(String uuid);
+
+    /**
+     * 更新uuid的用户信息
+     * @param uuid uuid
+     * @param user {@link User}
+     * @return bool
+     */
+    boolean updateUserInfo(String uuid,User user);
+
+    /**
+     * 删除用户byUUID
+     * @param uuid uuid
+     * @return bool
+     */
+    boolean removeUserByUuid(String uuid);
 }

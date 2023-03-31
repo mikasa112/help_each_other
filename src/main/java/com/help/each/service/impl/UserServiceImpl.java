@@ -1,7 +1,9 @@
 package com.help.each.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.core.vo.PageResult;
@@ -9,6 +11,8 @@ import com.help.each.entity.User;
 import com.help.each.mapper.UserMapper;
 import com.help.each.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -49,8 +53,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             default -> List.of(OrderItem.asc(sortBy));
         };
         page.setOrders(orderItemList);
-        userMapper.selectPage(page,new QueryWrapper<>());
+        userMapper.selectPage(page, new QueryWrapper<>());
         List<User> users = page.getRecords();
         return PageResult.Of(users, count(), currentPage, pageSize);
+    }
+
+    @Override
+    @Cacheable(value = "user",key = "#uuid")
+    public User getUserInfoByUuid(String uuid) {
+        return userMapper.selectOne(Wrappers.lambdaQuery(User.class).eq(User::getUuid,uuid));
+    }
+
+    @Override
+    //清空缓存
+    @CacheEvict(value = "user:page", allEntries = true)
+    public boolean updateUserInfo(String uuid, User user) {
+        return userMapper.update(user, Wrappers.lambdaQuery(User.class).eq(User::getUuid, uuid)) >= 1;
+    }
+
+    @Override
+    @CachePut(value = "user",key = "#uuid")
+    public boolean removeUserByUuid(String uuid) {
+        return userMapper.delete(Wrappers.lambdaQuery(User.class).eq(User::getUuid, uuid)) >= 1;
     }
 }

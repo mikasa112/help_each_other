@@ -18,5 +18,5 @@ public class AppConfig {
     /**
      * 默认分页大小
      */
-    private Integer pageSize = 10;
+    private Long pageSize = 10L;
 }
