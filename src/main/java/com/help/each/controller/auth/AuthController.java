@@ -27,17 +27,17 @@ public class AuthController {
 
     @PostMapping("login")
     public ApiResponse login(@RequestBody @Valid AuthenticationRequest request) {
-        return ApiResponse.OfSuccess(service.authenticate(request));
+        return service.authenticate(request);
     }
 
 
     @PostMapping("register")
     public ApiResponse register(@RequestBody @Valid RegisterRequest request) {
-        return ApiResponse.PrintlnApiResponse(service.register(request), "注册成功", Status.ERROR);
+        return service.register(request);
     }
 
     @PostMapping("logout")
     public ApiResponse logout(HttpServletRequest request) {
-        return ApiResponse.PrintlnApiResponse(service.logout(request), "退出登录成功", Status.ERROR);
+        return service.logout(request);
     }
 }

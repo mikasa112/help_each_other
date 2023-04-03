@@ -2,6 +2,7 @@ package com.help.each.service;
 
 import com.help.each.core.dto.AuthenticationRequest;
 import com.help.each.core.dto.RegisterRequest;
+import com.help.each.core.vo.ApiResponse;
 import com.help.each.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -13,22 +14,21 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface AuthenticationService {
     /**
      * 用户登录
-     *
-     * @return token
+     * @return {@link ApiResponse}
      */
-    String authenticate(AuthenticationRequest request);
+    ApiResponse authenticate(AuthenticationRequest request);
 
     /**
      * 注册
      *
-     * @return 是否成功
+     * @return {@link ApiResponse}
      */
-    boolean register(RegisterRequest request);
+    ApiResponse register(RegisterRequest request);
 
     /**
      * 登出
      *
-     * @return 是否成功
+     * @return {@link ApiResponse}
      */
-    boolean logout(HttpServletRequest request);
+    ApiResponse logout(HttpServletRequest request);
 }

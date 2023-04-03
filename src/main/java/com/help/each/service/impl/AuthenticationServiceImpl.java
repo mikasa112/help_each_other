@@ -10,6 +10,7 @@ import com.help.each.core.dto.AuthenticationRequest;
 import com.help.each.core.dto.RegisterRequest;
 import com.help.each.core.exception.RegisterException;
 import com.help.each.core.util.JWTUtil;
+import com.help.each.core.vo.ApiResponse;
 import com.help.each.entity.MyUserDetails;
 import com.help.each.entity.User;
 import com.help.each.mapper.UserMapper;
@@ -43,16 +44,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public String authenticate(AuthenticationRequest request) {
+    public ApiResponse authenticate(AuthenticationRequest request) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         UserDetails userDetails = (UserDetails) authenticate.getPrincipal();
         MyUserDetails myUserDetails = (MyUserDetails) userDetails;
-        return jwtUtil.generateToken(myUserDetails.getUser(), userDetails, request.isRemember());
+        return ApiResponse.OfSuccess(jwtUtil.generateToken(myUserDetails.getUser(), userDetails, request.isRemember()));
     }
 
     @Override
-    public boolean register(RegisterRequest request) {
+    public ApiResponse register(RegisterRequest request) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(User::getUsername, request.getUsername());
         User one = userMapper.selectOne(wrapper);
@@ -69,11 +70,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setAge(request.getAge());
-        return userMapper.insert(user) >= 1;
+        return ApiResponse.PrintlnApiResponse(userMapper.insert(user) >= 1, "注册成功", Status.ERROR);
     }
 
     @Override
-    public boolean logout(HttpServletRequest request) {
-        return jwtUtil.invalidateJWT(request);
+    public ApiResponse logout(HttpServletRequest request) {
+        return ApiResponse.PrintlnApiResponse(jwtUtil.invalidateJWT(request), "退出成功", Status.ERROR);
     }
 }

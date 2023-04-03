@@ -1,6 +1,7 @@
 package com.help.each.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.help.each.core.vo.ApiResponse;
 import com.help.each.core.vo.PageResult;
 import com.help.each.entity.User;
 
@@ -17,29 +18,29 @@ public interface UserService extends IService<User> {
      * @param pageSize    每页多大
      * @param sortBy      以什么排序
      * @param order       排序顺序
-     * @return 分页 {@link PageResult}
+     * @return {@link ApiResponse}
      */
-    PageResult<User> list(Long currentPage, Long pageSize, String sortBy, String order);
+    ApiResponse list(Long currentPage, Long pageSize, String sortBy, String order);
 
     /**
      * 获取用户的信息从uuid
      * @param uuid
-     * @return
+     * @return {@link ApiResponse}
      */
-    User getUserInfoByUuid(String uuid);
+    ApiResponse getUserInfoByUuid(String uuid);
 
     /**
      * 更新uuid的用户信息
      * @param uuid uuid
      * @param user {@link User}
-     * @return bool
+     * @return {@link ApiResponse}
      */
-    boolean updateUserInfo(String uuid,User user);
+    ApiResponse updateUserInfo(String uuid,User user);
 
     /**
      * 删除用户byUUID
      * @param uuid uuid
      * @return bool
      */
-    boolean removeUserByUuid(String uuid);
+    ApiResponse removeUserByUuid(String uuid);
 }
