@@ -33,6 +33,8 @@ spring:
     redis:
       time-to-live: 3600000
 mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql
   global-config:
     db-config:
       table-prefix: help_
@@ -58,7 +60,7 @@ app:
         - "/api/auth/login"
         - "/api/auth/logout"
         - "/api/auth/register"
-#        - "/api/v1/upload"
+      #        - "/api/v1/upload"
       # 需要过滤的请求，不限方法
       pattern:
         - "/test/*"

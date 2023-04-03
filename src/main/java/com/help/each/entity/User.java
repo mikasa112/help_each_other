@@ -20,6 +20,7 @@ public class User extends BaseModel implements Serializable {
     private String password;
     private String role;
     private String nickname;
+    private String sex;
     private String avatar;
     private String email;
     private String phone;
