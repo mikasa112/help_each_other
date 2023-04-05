@@ -9,7 +9,9 @@ import lombok.Getter;
  */
 @Getter
 public enum Status implements IStatus {
-
+    /*
+     * 系统基本信息
+     */
     OK(200, "操作成功"),
     ERROR(500, "操作异常"),
     PARAM_NOT_MATCH(400, "参数不匹配"),
@@ -19,6 +21,9 @@ public enum Status implements IStatus {
     REQUEST_NOT_FOUND(404, "请求资源不存在"),
     HTTP_BAD_METHOD(405, "请求方式不支持"),
     BAD_REQUEST(400, "请求异常"),
+    /*
+     * 系统常驻服务
+     */
     TOKEN_EXPIRED(5001, "token已过期,请重新登录"),
     TOKEN_PARSE_ERROR(5002, "token解析失败,请重新登录"),
     USERNAME_PASSWORD_ERROR(5003, "用户名或密码错误"),
@@ -28,9 +33,13 @@ public enum Status implements IStatus {
     FILE_UPLOAD_FAILED(5006, "文件上传失败"),
     USER_UPDATE_FAILED(5007, "用户信息更新失败"),
     USER_REMOVE_FAILED(5008, "用户删除失败"),
-    ARTICLE_NOT_FOUND(6001, "文章未找到"),
-    ADD_ARTICLE_FAILED(6002, "添加文章失败"),
+    /*
+     * 服务的状态
+     */
+    SERVICE_CREATE_FAILED(6001, "服务创建失败"),
+    SERVICE_REMOVE_FAILED(6002, "服务删除失败"),
     DELETE_ARTICLE_FAILED(6003, "删除文章失败"),
+
 
     ;
 

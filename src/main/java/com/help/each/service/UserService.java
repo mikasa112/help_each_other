@@ -2,7 +2,6 @@ package com.help.each.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.help.each.core.vo.ApiResponse;
-import com.help.each.core.vo.PageResult;
 import com.help.each.entity.User;
 
 
@@ -24,7 +23,8 @@ public interface UserService extends IService<User> {
 
     /**
      * 获取用户的信息从uuid
-     * @param uuid
+     *
+     * @param uuid 用户UUID
      * @return {@link ApiResponse}
      */
     ApiResponse getUserInfoByUuid(String uuid);

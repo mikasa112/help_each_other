@@ -112,6 +112,7 @@ public class ApiResponse implements Serializable {
 
     /**
      * 根据service返回的状态去选择响应
+     * todo 这个方法应该改为函数式调用这么写等于没用Function
      *
      * @param bool      service返回的状态
      * @param sucMsg    消息

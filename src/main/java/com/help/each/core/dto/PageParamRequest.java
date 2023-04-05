@@ -4,7 +4,6 @@ import com.help.each.core.constant.Consts;
 import lombok.Setter;
 import lombok.ToString;
 
-
 import java.util.Objects;
 
 /**
@@ -22,7 +21,7 @@ public class PageParamRequest {
     private String order;
 
     public Long getPage() {
-        //为空|小于0返回1
+        //为空或者小于0返回1
         if (Objects.isNull(page) || page <= 0L)
             return 1L;
         return page;

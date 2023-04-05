@@ -30,5 +30,5 @@ public interface Consts {
     /*
      * 令牌开头
      */
-    String Bearer = "Bearer ";
+    String BEARER = "Bearer ";
 }

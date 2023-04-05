@@ -1,9 +1,7 @@
 package com.help.each.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.core.constant.Status;
 import com.help.each.core.vo.ApiResponse;
@@ -18,9 +16,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
-
-import static com.help.each.core.constant.Consts.DESC_ORDER;
 
 
 /**
@@ -43,19 +38,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     ".concat('-')" +
                     ".concat(#order)")
     public ApiResponse list(Long currentPage, Long pageSize, String sortBy, String order) {
-        if (Objects.isNull(sortBy) || sortBy.isEmpty()) {
-            sortBy = "id";
-        }
-        Page<User> page = new Page<>();
-        page.setSize(pageSize);
-        page.setCurrent(currentPage);
-        List<OrderItem> orderItemList = switch (order) {
-            case DESC_ORDER -> List.of(OrderItem.desc(sortBy));
-            default -> List.of(OrderItem.asc(sortBy));
-        };
-        page.setOrders(orderItemList);
-        userMapper.selectPage(page, new QueryWrapper<>());
-        List<User> users = page.getRecords();
+//删除冗余代码
+//        if (Objects.isNull(sortBy) || sortBy.isEmpty()) {
+//            sortBy = "id";
+//        }
+// 这段代码重复出现，重构之
+//        Page<User> page = new Page<>();
+//        page.setSize(pageSize);
+//        page.setCurrent(currentPage);
+//        List<OrderItem> orderItemList = switch (order) {
+//            case DESC_ORDER -> List.of(OrderItem.desc(sortBy));
+//            default -> List.of(OrderItem.asc(sortBy));
+//        };
+//        page.setOrders(orderItemList);
+//        userMapper.selectPage(page, new QueryWrapper<>());
+//        List<User> users = page.getRecords();
+        List<User> users = PageResult.GetDefaultPageList(userMapper, new QueryWrapper<>(), currentPage, pageSize, sortBy, order);
         PageResult<User> pageResult = PageResult.Of(users, count(), currentPage, pageSize);
         return ApiResponse.OfStatus(Status.OK, pageResult);
     }

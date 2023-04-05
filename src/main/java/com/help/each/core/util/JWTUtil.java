@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.help.each.config.AppConfig;
 import com.help.each.core.constant.Consts;
 import com.help.each.core.constant.Status;
+import com.help.each.core.exception.SecurityException;
 import com.help.each.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -22,8 +23,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-
-import com.help.each.core.exception.SecurityException;
 
 /**
  * @author Yuanan
@@ -154,7 +153,7 @@ public class JWTUtil {
      */
     public String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader(appConfig.getJwt().getTokenHeader());
-        if (StrUtil.isNotBlank(bearerToken) && bearerToken.startsWith(Consts.Bearer)) {
+        if (StrUtil.isNotBlank(bearerToken) && bearerToken.startsWith(Consts.BEARER)) {
             return bearerToken.substring(7);
         }
         return null;
