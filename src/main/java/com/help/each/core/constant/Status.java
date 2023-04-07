@@ -38,8 +38,7 @@ public enum Status implements IStatus {
      */
     SERVICE_CREATE_FAILED(6001, "服务创建失败"),
     SERVICE_REMOVE_FAILED(6002, "服务删除失败"),
-    DELETE_ARTICLE_FAILED(6003, "删除文章失败"),
-
+    SERVICE_UPDATE_FAILED(6003, "服务更新失败"),
 
     ;
 

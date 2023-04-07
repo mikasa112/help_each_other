@@ -30,7 +30,8 @@ public interface ServiceService extends IService<Service> {
      * @param order       排序顺序默认asc
      * @return {@link ApiResponse}
      */
-    ApiResponse getServices(String uuid, Long currentPage, Long pageSize, String sortBy, String order);
+    ApiResponse getServices(String uuid, Long currentPage, Long pageSize, String sortBy,
+        String order);
 
     /**
      * 获取服务列表
@@ -68,7 +69,7 @@ public interface ServiceService extends IService<Service> {
      * @param serviceId 服务ID
      * @return {@link ApiResponse}
      */
-    ApiResponse updateService(String uuid, Long serviceId);
+    ApiResponse updateService(String uuid, Long serviceId, Service service);
 
     /**
      * 删除单个服务从UUID和服务ID

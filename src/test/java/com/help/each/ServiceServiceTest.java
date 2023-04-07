@@ -20,7 +20,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @Slf4j
 public class ServiceServiceTest {
-    private static final String UUID = "45df5a38-43fc-4da5-8ed7-2aa521614baf";
+    private static final String ADMIN_UUID = "8a0aa8b7-9c39-479a-83ff-f018a4a5e7d6";
+    private static final String YUANAN_UUID="45df5a38-43fc-4da5-8ed7-2aa521614baf";
+
     @Autowired
     ServiceService service;
     @Autowired
@@ -29,19 +31,21 @@ public class ServiceServiceTest {
     @Test
     public void testInsert() {
         Service s = new Service();
-        s.setUuid(UUID)
+        s.setUuid(ADMIN_UUID)
                 .setServiceId(IdUtil.getSnowflakeNextId())
                 .setName("这个是测试服务")
                 .setIntroduction("这是测试这是测试这是测试这是测试这是测试这是测试")
                 .setKeywords("这是测试")
                 .setPointsPrice(20D);
-        ApiResponse apiResponse = service.addService(UUID, s);
+        ApiResponse apiResponse = service.addService(ADMIN_UUID, s);
         Assertions.assertEquals(apiResponse.getCode(), 200);
     }
 
     @Test
     public void testSelectByUUID() {
-        ApiResponse apiResponse = service.getServices(UUID, 1L, appConfig.getPageSize(), Consts.SORT_BY, Consts.ASC_ORDER);
-        Assertions.assertEquals(apiResponse.getCode(), 200);
+        ApiResponse apiResponse1 = service.getServices(ADMIN_UUID, 1L, appConfig.getPageSize(), Consts.SORT_BY, Consts.ASC_ORDER);
+        Assertions.assertEquals(apiResponse1.getCode(), 200);
+        ApiResponse apiResponse2 = service.getServices(YUANAN_UUID, 1L, appConfig.getPageSize(), Consts.SORT_BY, Consts.ASC_ORDER);
+        Assertions.assertEquals(apiResponse2.getCode(), 200);
     }
 }

@@ -4,11 +4,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.help.each.core.constant.Status;
 import com.help.each.core.exception.BaseException;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Builder;
-import lombok.Data;
-
 import java.io.IOException;
 import java.io.Serializable;
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * @author Yuanan
@@ -18,6 +17,7 @@ import java.io.Serializable;
 @Data
 @Builder
 public class ApiResponse implements Serializable {
+
     private Integer code;
     private String message;
     private Object data;
@@ -79,7 +79,8 @@ public class ApiResponse implements Serializable {
      * @param status   ${Status}
      * @throws IOException io异常
      */
-    public static void PrintlnApiResponse(HttpServletResponse response, Status status) throws IOException {
+    public static void PrintlnApiResponse(HttpServletResponse response, Status status)
+        throws IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "*");
         response.setCharacterEncoding("UTF-8");
@@ -98,7 +99,8 @@ public class ApiResponse implements Serializable {
      * @param e        {@code BaseException}
      * @throws IOException io异常
      */
-    public static void PrintlnApiResponse(HttpServletResponse response, BaseException e) throws IOException {
+    public static void PrintlnApiResponse(HttpServletResponse response, BaseException e)
+        throws IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "*");
         response.setCharacterEncoding("UTF-8");
@@ -112,15 +114,15 @@ public class ApiResponse implements Serializable {
 
     /**
      * 根据service返回的状态去选择响应
-     * todo 这个方法应该改为函数式调用这么写等于没用Function
      *
      * @param bool      service返回的状态
      * @param sucMsg    消息
      * @param errStatus 失败时的状态
      */
     public static ApiResponse PrintlnApiResponse(boolean bool, String sucMsg, Status errStatus) {
-        if (bool)
+        if (bool) {
             return OfMessage(sucMsg);
+        }
         return OfStatus(errStatus);
     }
 }
