@@ -168,6 +168,8 @@ public class JWTUtil {
     public boolean invalidateJWT(HttpServletRequest request) {
         String jwt = getJwtFromRequest(request);
         String username = extractUsername(jwt);
+        //记得本地cache中删除key
+        LocalStaticCache.getInstance().deleteObject(username);
         return redisUtil.deleteObject(Consts.REDIS_JWT_KEY_PREFIX + username);
     }
 

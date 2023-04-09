@@ -1,10 +1,7 @@
 package com.help.each.service.impl;
 
 import cn.hutool.core.util.IdUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.help.each.core.constant.Status;
 import com.help.each.core.dto.AuthenticationRequest;
 import com.help.each.core.dto.RegisterRequest;
@@ -17,8 +14,6 @@ import com.help.each.mapper.UserMapper;
 import com.help.each.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -77,4 +72,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ApiResponse logout(HttpServletRequest request) {
         return ApiResponse.PrintlnApiResponse(jwtUtil.invalidateJWT(request), "退出成功", Status.ERROR);
     }
+
+
 }

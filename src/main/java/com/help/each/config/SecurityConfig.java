@@ -3,6 +3,7 @@ package com.help.each.config;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.help.each.core.constant.Status;
 import com.help.each.core.exception.LoginException;
+import com.help.each.core.util.LocalStaticCache;
 import com.help.each.entity.MyUserDetails;
 import com.help.each.entity.User;
 import com.help.each.mapper.UserMapper;
@@ -17,6 +18,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Objects;
 
 
 /**
@@ -36,9 +39,15 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            User user = userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUsername, username));
-            if (user == null) {
-                throw new LoginException(Status.USERNAME_PASSWORD_ERROR);
+            //将user缓存避免每次请求都会查询
+            User user = (User) LocalStaticCache.getInstance().getObject(username);
+            if (Objects.isNull(user)) {
+                User u = userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUsername, username));
+                if (Objects.isNull(u)) {
+                    throw new LoginException(Status.USERNAME_PASSWORD_ERROR);
+                }
+                LocalStaticCache.getInstance().setObject(username, u);
+                user = u;
             }
             return new MyUserDetails(user);
         };
