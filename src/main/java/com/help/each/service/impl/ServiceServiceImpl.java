@@ -141,12 +141,16 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     @Cacheable(value = "service:page:user", key = "#uuid+'-'+#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
     public PageResult<Service> getServicesWrap(String uuid, Long currentPage, Long pageSize, String sortBy,
                                                String order) {
+        //这是查count的
         LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class)
                 .eq(Service::getUuid, uuid);
+        long count = mapper.selectCount(wrapper);
+        //选择查询的字段
+        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice);
         List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper, currentPage,
                 pageSize, sortBy, order);
         List<Service> list = services.stream().map(s -> s.setVisited(getVisited(s.getServiceId()))).toList();
-        return PageResult.Of(list, count(wrapper), currentPage, pageSize);
+        return PageResult.Of(list, count, currentPage, pageSize);
     }
 
     /**
@@ -198,18 +202,23 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         Page<Service> page = new Page<>();
         page.setCurrent(currentPage);
         page.setSize(pageSize);
-        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).like(Service::getName, name);
+        //这是查询count的
+        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class)
+                .like(Service::getName, name);
+        Long count = mapper.selectCount(wrapper);
+        //选择查询的字段
+        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice);
         mapper.selectPage(page, wrapper);
         List<Service> services = page.getRecords();
-        return PageResult.Of(services, mapper.selectCount(wrapper), currentPage, pageSize);
+        return PageResult.Of(services, count, currentPage, pageSize);
     }
 
 
     @Override
-    @Caching(put = @CachePut(value = "service", key = "#service.serviceId"),
-            evict = {@CacheEvict(value = "service:page", allEntries = true),
-                    @CacheEvict(value = "service:page:names", allEntries = true),
-                    @CacheEvict(value = "service:page:user", allEntries = true)})
+    @Caching(evict = {@CacheEvict(value = "service:page", allEntries = true),
+            @CacheEvict(value = "service", key = "#serviceId"),
+            @CacheEvict(value = "service:page:names", allEntries = true),
+            @CacheEvict(value = "service:page:user", allEntries = true)})
     public ApiResponse updateService(Long serviceId, Service service) {
         boolean b = mapper.update(service,
                 Wrappers.lambdaQuery(Service.class)

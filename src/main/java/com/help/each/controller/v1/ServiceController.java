@@ -52,7 +52,7 @@ public class ServiceController {
     }
 
     @PutMapping("{serviceId}")
-    public ApiResponse update(@PathVariable("serviceId") Long serviceId, @Valid AddServiceRequest request) {
+    public ApiResponse update(@PathVariable("serviceId") Long serviceId, @Valid @RequestBody AddServiceRequest request) {
         Service s = new Service();
         s.setName(request.getName())
                 .setAddress(request.getAddress())
@@ -70,7 +70,7 @@ public class ServiceController {
     }
 
     @PostMapping
-    public ApiResponse addService(Authentication authentication, @Valid AddServiceRequest request) {
+    public ApiResponse addService(Authentication authentication, @Valid @RequestBody AddServiceRequest request) {
         MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
         String uuid = userDetails.getUser().getUuid();
         Service s = service.createService(uuid, request);
