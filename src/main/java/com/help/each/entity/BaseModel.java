@@ -2,6 +2,7 @@ package com.help.each.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -27,6 +28,7 @@ public class BaseModel implements Serializable {
      * 自增ID
      */
     @TableId(type = IdType.AUTO)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Long id;
     /**
      * 创建时间自动填充
@@ -36,6 +38,7 @@ public class BaseModel implements Serializable {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @TableField(value = "created_at", fill = FieldFill.INSERT)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private LocalDateTime createdAt;
     /**
      * 更新或者插入时间自动填充
@@ -45,6 +48,7 @@ public class BaseModel implements Serializable {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private LocalDateTime updatedAt;
     /**
      * 删除时间于
@@ -55,6 +59,7 @@ public class BaseModel implements Serializable {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @TableField(value = "deleted_at")
     @TableLogic(value = "null", delval = "now()")
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private LocalDateTime deletedAt;
 
 }

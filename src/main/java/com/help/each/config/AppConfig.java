@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 public class AppConfig {
     private IgnoreConfig ignores;
     private JwtConfig jwt;
-    /**
+    /*
      * 默认分页大小
      */
-    private Long pageSize = 10L;
+//    private Long pageSize = 10L;
 }

@@ -13,8 +13,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
-
 /**
  * @author Yuanan
  * @date 2023/3/31
@@ -37,9 +35,6 @@ public class UserController {
     @GetMapping
     @Secured("admin")
     public ApiResponse index(PageParamRequest request) {
-        if (Objects.isNull(request.getSize())) {
-            request.setSize(appConfig.getPageSize());
-        }
         return service.list(request.getPage(), request.getSize(), request.getSort(), request.getOrder());
     }
 

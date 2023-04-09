@@ -1,6 +1,7 @@
 package com.help.each.core.dto;
 
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -12,11 +13,6 @@ import org.hibernate.validator.constraints.Length;
  */
 @Data
 public class AddServiceRequest {
-    /*
-    服务创建者的uuid
-     */
-    @NotEmpty(message = "创建者的uuid不能为空")
-    private String uuid;
     /*
     服务的名称
      */
@@ -33,9 +29,15 @@ public class AddServiceRequest {
      */
     @Max(value = 255, message = "服务的关键字最长为255个字符")
     private String keywords;
+
+    @Min(value = 0, message = "服务的价格最小不能为0")
+    private Double pointsPrice;
+
+    private String pictures;
     /*
     所需服务的地址
      */
     @Max(value = 255, message = "所需服务的地址最长为255个字符")
     private String address;
+
 }

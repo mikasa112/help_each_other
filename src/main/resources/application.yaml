@@ -33,8 +33,8 @@ spring:
     redis:
       time-to-live: 3600000
 mybatis-plus:
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql
   global-config:
     db-config:
       table-prefix: help_
@@ -45,7 +45,7 @@ logging:
 app:
   config:
     #每页大小
-    pageSize: 10
+    #pageSize: 10
     imageUrl: http://localhost/images/
     jwt:
       #token头

@@ -72,6 +72,11 @@ public class GlobalExceptionHandler {
             return ApiResponse.OfException((BaseException) e);
         }
         log.error("【全局异常拦截】: 异常信息 {} ", e.getMessage());
+        StackTraceElement ste = e.getStackTrace()[0];
+        log.error("【全局异常拦截】: 异常类 {} ", ste.getClassName());
+        log.error("【全局异常拦截】: 异常类名 {} ", ste.getFileName());
+        log.error("【全局异常拦截】: 异常行号 {} ", ste.getLineNumber());
+        log.error("【全局异常拦截】: 异常方法 {} ", ste.getMethodName());
         return ApiResponse.OfStatus(Status.ERROR);
     }
 

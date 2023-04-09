@@ -13,6 +13,14 @@ public interface Consts {
     String REDIS_JWT_KEY_PREFIX = "security:jwt:";
 
     /*
+     * 服务访问次数
+     */
+    String SERVICE_VISITED_KEY_PREFIX = "service:visited_count:";
+
+
+    Long DEFAULT_PAGE_SIZE = 10L;
+
+    /*
      * 升序
      */
     String ASC_ORDER = "asc";
@@ -25,7 +33,7 @@ public interface Consts {
     /*
      * 默认以id排序
      */
-    String SORT_BY="id";
+    String SORT_BY = "id";
 
     /*
      * 令牌开头
