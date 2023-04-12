@@ -96,3 +96,11 @@ func Fatal(args ...interface{}) {
 func Fatalf(t string, args ...interface{}) {
 	sLog.Fatalf(t, args)
 }
+
+func Panicln(args ...interface{}) {
+	sLog.Panicln(args)
+}
+
+func Panicf(t string, args ...interface{}) {
+	sLog.Panicf(t, args)
+}
