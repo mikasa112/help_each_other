@@ -23,6 +23,8 @@ const (
 	CONNECT ProtoType = 0x01
 	// CONNACK server-->client，连接报文确认
 	CONNACK ProtoType = 0x02
+	// MESSAGE server-->client,服务端推送消息
+	MESSAGE ProtoType = 0x03
 	// PING client-->server,心跳请求
 	PING ProtoType = 0x0C
 	// PONG server-->client,心跳响应
@@ -73,6 +75,7 @@ type Protocol interface {
 // Packet 封包
 func (d *Data) Packet(w *bufio.Writer) error {
 	var pkg = new(bytes.Buffer)
+	//小端
 	err := binary.Write(pkg, binary.LittleEndian, &d.DataHead)
 	err = binary.Write(pkg, binary.LittleEndian, &d.DataContent)
 	_, err = w.Write(pkg.Bytes())
@@ -88,6 +91,7 @@ func (d *Data) Unpack(r *bufio.Reader) error {
 	//读取前三个字节为报文固定头
 	head, err := r.Peek(3)
 	headBuffer := bytes.NewBuffer(head)
+	//小端
 	err = binary.Read(headBuffer, binary.LittleEndian, &d.DataHead)
 	i := make([]byte, 3+d.DataHead.DataLen())
 	_, err = r.Read(i)

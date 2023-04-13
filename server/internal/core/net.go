@@ -6,11 +6,14 @@ import (
 	"server/internal/protocol"
 	"server/pkg/conf"
 	"server/pkg/logger"
+	"time"
 )
 
 type NetServer struct {
 	addr string
 }
+
+var Message = make(chan []byte)
 
 func (s *NetServer) Start() {
 	listen, err := net.Listen("tcp", s.addr)
@@ -26,9 +29,31 @@ func (s *NetServer) Start() {
 		connect(conn)
 		connack(conn)
 		go process(conn)
+		go handle(conn)
+		time.Sleep(time.Second * 2)
+		s := []byte("hello")
+		Message <- s
 	}
 }
 
+func handle(conn net.Conn) {
+	for {
+		m := <-Message
+		w := bufio.NewWriter(conn)
+		lenBytes := protocol.CoverUint16ToBytes(uint16(len(m)))
+		data := protocol.Data{
+			DataHead:    protocol.DataHead{protocol.MESSAGE.Bytes(), lenBytes[0], lenBytes[1]},
+			DataContent: m,
+		}
+		err := data.Packet(w)
+		if err != nil {
+			ErrHandle(err, conn)
+			break
+		}
+	}
+}
+
+// 处理报文的控制
 func process(conn net.Conn) {
 	for {
 		data := protocol.Data{}
