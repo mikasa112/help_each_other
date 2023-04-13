@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"os"
-	"server/internal/protocol"
+	"server/internal/core"
 	"server/pkg/conf"
 	"server/pkg/logger"
 )
@@ -24,14 +24,5 @@ func readBanner() {
 }
 
 func main() {
-	bytes := []byte("😊这是一段中文的字符你们好好看看")
-	d := protocol.CoverUint16ToBytes(uint16(len(bytes)))
-	//core.New()
-	data := protocol.Data{
-		DataHead:    protocol.DataHead{protocol.PONG, d[0], d[1]},
-		DataContent: bytes,
-	}
-	packet := data.Packet()
-	log.Printf("%s", packet)
-
+	core.New()
 }
