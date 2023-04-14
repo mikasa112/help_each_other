@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 )
 
@@ -32,6 +33,12 @@ const (
 	// DISCONNECT client-->server,客户端断开连接
 	DISCONNECT ProtoType = 0x0E
 )
+
+func (c DataContent) String() string {
+	var s string
+	_ = json.Unmarshal(c, &s)
+	return s
+}
 
 // Bytes 发送数据时左移四位
 func (t ProtoType) Bytes() byte {
