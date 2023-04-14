@@ -17,6 +17,11 @@ public interface Consts {
      */
     String SERVICE_VISITED_KEY_PREFIX = "service:visited_count:";
 
+    /*
+       订单redis key前缀
+     */
+    String ORDER_KEY_PREFIX = "order:";
+
 
     Long DEFAULT_PAGE_SIZE = 10L;
 

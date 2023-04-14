@@ -62,7 +62,7 @@ public class Service extends BaseModel {
     private Integer visited;
 
     /*
-    服务的状态 0:未完成，1:已完成
+    服务的状态 0:未接单，1:已接单
      */
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Integer status;
