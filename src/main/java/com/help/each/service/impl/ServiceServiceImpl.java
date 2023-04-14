@@ -83,7 +83,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         long id = IdUtil.getSnowflakeNextId();
         addVisited(id);
         return new Service(id, uuid, r.getName(),
-                r.getIntroduction(), r.getKeywords(), r.getPointsPrice(), r.getPictures(), r.getAddress(), 1);
+                r.getIntroduction(), r.getKeywords(), r.getPointsPrice(), r.getPictures(), r.getAddress(), 1, 0);
     }
 
 
@@ -110,7 +110,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
      */
     @Cacheable(value = "service:page", key = "#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
     public PageResult<Service> getServicesWrap(Long currentPage, Long pageSize, String sortBy, String order) {
-        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice);
+        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus);
         List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper,
                 currentPage, pageSize, sortBy, order);
         return PageResult.Of(services, count(), currentPage, pageSize);
@@ -146,7 +146,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
                 .eq(Service::getUuid, uuid);
         long count = mapper.selectCount(wrapper);
         //选择查询的字段
-        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice);
+        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus);
         List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper, currentPage,
                 pageSize, sortBy, order);
         List<Service> list = services.stream().map(s -> s.setVisited(getVisited(s.getServiceId()))).toList();
@@ -207,7 +207,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
                 .like(Service::getName, name);
         Long count = mapper.selectCount(wrapper);
         //选择查询的字段
-        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice);
+        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus);
         mapper.selectPage(page, wrapper);
         List<Service> services = page.getRecords();
         return PageResult.Of(services, count, currentPage, pageSize);

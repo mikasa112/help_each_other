@@ -61,6 +61,12 @@ public class Service extends BaseModel {
     @TableField(exist = false)
     private Integer visited;
 
+    /*
+    服务的状态 0:未完成，1:已完成
+     */
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Integer status;
+
     public Integer getVisited() {
         if (Objects.isNull(visited)) {
             return 0;
