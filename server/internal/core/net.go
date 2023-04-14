@@ -18,12 +18,12 @@ var Message = make(chan []byte)
 func (s *NetServer) Start() {
 	listen, err := net.Listen("tcp", s.addr)
 	if err != nil {
-		logger.Panicf("服务启动失败，启动地址为: {%v}, 错误为: {%v}", conf.ServerConf.Addr, err)
+		logger.Panicf("服务启动失败，启动地址为: %v, 错误为: %v", conf.ServerConf.Addr, err)
 	}
 	for {
 		conn, err := listen.Accept()
 		if err != nil {
-			logger.Errorf("%v 连接失败，错误为: {%v}", conn.RemoteAddr(), err)
+			logger.Errorf("%v 连接失败，错误为: %v", conn.RemoteAddr(), err)
 			continue
 		}
 		connect(conn)
@@ -66,6 +66,12 @@ func process(conn net.Conn) {
 			}
 			w := bufio.NewWriter(conn)
 			err = data.Packet(w)
+			//client主动关闭连接时
+		} else if data.DataType() == protocol.DISCONNECT {
+			logger.Infof("%v以主动断开连接", conn.RemoteAddr().String())
+			conn.Close()
+			//退出死循环
+			break
 		}
 		if err != nil {
 			ErrHandle(err, conn)
