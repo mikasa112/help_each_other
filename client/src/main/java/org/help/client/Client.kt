@@ -1,14 +1,18 @@
 package org.help.client
 
+import com.alibaba.fastjson.JSONObject
 import org.help.protocol.Data
 import org.help.protocol.Protoc
 import org.help.protocol.Protocol
 import org.help.protocol.model.Connect
 import org.help.protocol.model.DisConnect
+import org.help.protocol.model.Order
 import org.help.protocol.model.Ping
 import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -25,11 +29,11 @@ class Client(private val host: String, private val port: Int) : Protoc {
     private var heartBeatCount: Int = 0
     private var heartBeatResCount: Int = 0
 
-    constructor() : this("192.168.1.115", 8081) {
+    constructor() : this("127.0.0.1", 8081) {
         handle(host, port)
     }
 
-    private fun handle(host: String, port: Int) {
+    fun handle(host: String, port: Int) {
         heartBeatCount = 0
         heartBeatResCount = 0
         try {
@@ -47,7 +51,7 @@ class Client(private val host: String, private val port: Int) : Protoc {
         }
     }
 
-    private fun close(closeable: Closeable) {
+    fun close(closeable: Closeable) {
         closeable.close()
     }
 
@@ -92,7 +96,9 @@ class Client(private val host: String, private val port: Int) : Protoc {
         while (ALIVE) {
             val data = Data()
             input.read(data.dataHead)
-            when (data.getProtocolType()) {
+            data.dataHead.forEach { println(it) }
+            val protocolType = data.getProtocolType()
+            when (protocolType) {
                 Protocol.PONG -> {
                     println("服务还活着呢")
                     ++heartBeatResCount
@@ -101,8 +107,9 @@ class Client(private val host: String, private val port: Int) : Protoc {
                 Protocol.MESSAGE -> {
                     data.dataContent = ByteArray(data.getDataContentLen())
                     input.read(data.dataContent)
-                    //todo 记得在实际运用时修改
-                    println("server say: ${String(data.dataContent, StandardCharsets.UTF_8)}")
+                    println(String(data.dataContent, StandardCharsets.UTF_8))
+//                    val order: Order = JSONObject.parse(data.dataContent) as Order
+//                    println("通知到客户: $order")
                 }
 
                 else -> continue
@@ -122,7 +129,7 @@ class Client(private val host: String, private val port: Int) : Protoc {
     }
 
     companion object {
-        const val HEARTBEAT = 1000 * 30L
+        val HEARTBEAT = 1000 * 30L
         var ALIVE = true
 
         @JvmStatic
