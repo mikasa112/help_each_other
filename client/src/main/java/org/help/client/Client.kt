@@ -29,7 +29,7 @@ class Client(private val host: String, private val port: Int) : Protoc {
         handle(host, port)
     }
 
-    fun handle(host: String, port: Int) {
+    private fun handle(host: String, port: Int) {
         heartBeatCount = 0
         heartBeatResCount = 0
         try {
@@ -47,7 +47,7 @@ class Client(private val host: String, private val port: Int) : Protoc {
         }
     }
 
-    fun close(closeable: Closeable) {
+    private fun close(closeable: Closeable) {
         closeable.close()
     }
 
@@ -92,8 +92,7 @@ class Client(private val host: String, private val port: Int) : Protoc {
         while (ALIVE) {
             val data = Data()
             input.read(data.dataHead)
-            val protocolType = data.getProtocolType()
-            when (protocolType) {
+            when (data.getProtocolType()) {
                 Protocol.PONG -> {
                     println("服务还活着呢")
                     ++heartBeatResCount
@@ -102,7 +101,8 @@ class Client(private val host: String, private val port: Int) : Protoc {
                 Protocol.MESSAGE -> {
                     data.dataContent = ByteArray(data.getDataContentLen())
                     input.read(data.dataContent)
-                    println(String(data.dataContent, StandardCharsets.UTF_8))
+                    //todo 记得在实际运用时修改
+                    println("server say: ${String(data.dataContent, StandardCharsets.UTF_8)}")
                 }
 
                 else -> continue
@@ -122,7 +122,7 @@ class Client(private val host: String, private val port: Int) : Protoc {
     }
 
     companion object {
-        val HEARTBEAT = 1000 * 30L
+        const val HEARTBEAT = 1000 * 30L
         var ALIVE = true
 
         @JvmStatic

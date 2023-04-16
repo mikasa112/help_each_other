@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"log"
+	"runtime"
 	"server/internal/protocol"
 	"server/pkg/conf"
 	"server/pkg/logger"
@@ -20,12 +21,13 @@ func New() {
 	server := &NetServer{addr: conf.ServerConf.Addr}
 	go server.Start()
 	logger.Infoln("服务已启动...")
-	//检查容器
-	go checkContainer()
+	//检查服务器状态
+	go checkServer()
 	distribute()
 	WG.Wait()
 }
 
+// 会话分发给User
 func distribute() {
 	for {
 		select {
@@ -65,12 +67,12 @@ func decode(data []byte) string {
 	return str
 }
 
-func checkContainer() {
-	ticker := time.NewTicker(5 * time.Second)
-	for _ = range ticker.C {
+func checkServer() {
+	ticker := time.NewTicker(10 * time.Second)
+	for range ticker.C {
 		container := GetContainer()
-		for _, user := range container.Users {
-			log.Printf("容器里有: %v", user.Uuid)
-		}
+		log.Printf("容器里有: %v", container.Users)
+		goroutine := runtime.NumGoroutine()
+		log.Printf("当前服务器并发Goroutines为: %v", goroutine)
 	}
 }
