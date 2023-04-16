@@ -3,10 +3,12 @@ package core
 import (
 	"bufio"
 	"encoding/json"
+	"log"
 	"server/internal/protocol"
 	"server/pkg/conf"
 	"server/pkg/logger"
 	"sync"
+	"time"
 )
 
 var WG sync.WaitGroup
@@ -17,8 +19,10 @@ func New() {
 	WG.Add(1)
 	server := &NetServer{addr: conf.ServerConf.Addr}
 	go server.Start()
-	distribute()
 	logger.Infoln("服务已启动...")
+	//检查容器
+	go checkContainer()
+	distribute()
 	WG.Wait()
 }
 
@@ -59,4 +63,14 @@ func decode(data []byte) string {
 		logger.Errorf("解码失败, 错误为: %v", err)
 	}
 	return str
+}
+
+func checkContainer() {
+	ticker := time.NewTicker(5 * time.Second)
+	for _ = range ticker.C {
+		container := GetContainer()
+		for _, user := range container.Users {
+			log.Printf("容器里有: %v", user.Uuid)
+		}
+	}
 }

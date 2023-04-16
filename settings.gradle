@@ -1,2 +1,3 @@
 rootProject.name = 'help_each_other'
+include 'client'
 
