@@ -22,8 +22,9 @@ open class Data(
      * 获取报文的固定头部的长度信息
      */
     fun getDataContentLen(): Int {
-        val high = dataHead[1].toInt()
-        val low = dataHead[2].toInt()
+        // java在位运算时会把byte提升到int，所以我们只关心低八位，需先和0xFF取&,或者先提升到int在和0xFF取&
+        val high = dataHead[1].toInt() and 0xFF
+        val low = dataHead[2].toInt() and 0xFF
         return (high shl 8) or low
     }
 
@@ -31,7 +32,7 @@ open class Data(
      * 获取报文的协议类型
      */
     fun getProtocolType(): Protocol? {
-        val byte = dataHead[0].toInt()
+        val byte = dataHead[0].toInt() and 0xFF
         return ProtocolType((byte and 0xF0) shr 4)
     }
 

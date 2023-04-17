@@ -21,6 +21,7 @@ func NewConfig(path string) *Config {
 // ReadConfig 读取配置
 func (c *Config) ReadConfig() {
 	err := viper.UnmarshalKey("server", &ServerConf)
+	err = viper.UnmarshalKey("redis", &RedisConf)
 	if err != nil {
 		log.Panicf("日志读取失败，错误为: %v\n", err)
 	}
@@ -28,7 +29,16 @@ func (c *Config) ReadConfig() {
 
 var ServerConf *ServerConfig
 
+var RedisConf *RedisConfig
+
 type ServerConfig struct {
-	Addr string
-	Mode string
+	Addr    string
+	Mode    string
+	Channel string
+}
+
+type RedisConfig struct {
+	Addr     string
+	Password string
+	Db       int
 }

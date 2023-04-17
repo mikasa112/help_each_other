@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"server/internal/core"
+	"server/pkg/cache"
 	"server/pkg/conf"
 	"server/pkg/logger"
 )
@@ -12,6 +13,7 @@ func init() {
 	config := conf.NewConfig("./")
 	config.ReadConfig()
 	logger.New()
+	cache.RDB = cache.New()
 	readBanner()
 }
 

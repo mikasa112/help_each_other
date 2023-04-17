@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"runtime"
+	"server/internal"
 	"server/internal/protocol"
 	"server/pkg/conf"
 	"server/pkg/logger"
@@ -20,9 +21,10 @@ func New() {
 	WG.Add(1)
 	server := &NetServer{addr: conf.ServerConf.Addr}
 	go server.Start()
+	go RedisChannel()
 	logger.Infoln("服务已启动...")
 	//检查服务器状态
-	go checkServer()
+	//go checkServer()
 	distribute()
 	WG.Wait()
 }
@@ -32,10 +34,9 @@ func distribute() {
 	for {
 		select {
 		case m := <-Message:
-			//todo 目前msg直接视作UUID
-			msg := decode(m)
+			order := decode(m)
 			//根据msg的UUID去获得conn
-			conn, err := GetContainer().matchConn(msg)
+			conn, err := GetContainer().matchConn(order)
 			if err != nil {
 				//uuid的用户不存在跳过本次
 				continue
@@ -57,14 +58,14 @@ func distribute() {
 
 }
 
-// 解码为string类型 todo后续应该封装一下
-func decode(data []byte) string {
-	var str string
-	err := json.Unmarshal(data, &str)
+// 解码为order类型
+func decode(data []byte) internal.Order {
+	order := internal.Order{}
+	err := json.Unmarshal(data, &order)
 	if err != nil {
 		logger.Errorf("解码失败, 错误为: %v", err)
 	}
-	return str
+	return order
 }
 
 func checkServer() {

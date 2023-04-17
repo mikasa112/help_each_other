@@ -1,6 +1,7 @@
 package com.help.each.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.core.constant.Status;
 import com.help.each.core.util.RedisUtil;
@@ -11,9 +12,8 @@ import com.help.each.mapper.ServiceMapper;
 import com.help.each.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
-import static com.help.each.core.constant.Consts.ORDER_KEY_PREFIX;
 
 /**
  * @author Yuanan
@@ -28,20 +28,26 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     final OrderMapper orderMapper;
     final ServiceMapper serviceMapper;
     final RedisUtil redisUtil;
+    final RedisTemplate<Object, Object> redisTemplate;
 
 
     @Override
     public ApiResponse takeOrder(String uuid, Long serviceId) {
+        com.help.each.entity.Service customer = serviceMapper.selectOne(Wrappers.lambdaQuery(com.help.each.entity.Service.class)
+                .eq(com.help.each.entity.Service::getServiceId, serviceId)
+                .select(com.help.each.entity.Service::getUuid));
         Order order = new Order();
         order.setOrderId(IdUtil.getSnowflakeNextId())
                 .setServiceId(serviceId)
-                .setUuid(uuid)
+                .setProviderUuid(uuid)
+                .setCustomerUuid(customer.getUuid())
                 .setStatus(0);
-        if (orderMapper.insert(order) >= 1) {
-            redisUtil.setObject(ORDER_KEY_PREFIX + order.getOrderId(), order.toJSONString());
-            return ApiResponse.OfStatus(Status.OK);
-        }
-        return ApiResponse.OfStatus(Status.ERROR);
+        redisTemplate.convertAndSend("order", order);
+//        if (orderMapper.insert(order) >= 1) {
+//            redisUtil.setObject(ORDER_KEY_PREFIX + order.getOrderId(), order.toJSONString());
+//            return ApiResponse.OfStatus(Status.OK);
+//        }
+        return ApiResponse.OfStatus(Status.OK);
     }
 
     @Override

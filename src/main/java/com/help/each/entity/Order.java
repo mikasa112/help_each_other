@@ -38,8 +38,12 @@ public class Order extends BaseModel {
         接单人的uuid
      */
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
-    private String uuid;
-
+    private String providerUuid;
+    /*
+        顾客的UUID
+     */
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private String customerUuid;
     /*
     订单状态(0等待顾客同意，1正在进行，2已完成，3异常，4取消)
      */

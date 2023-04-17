@@ -1,6 +1,6 @@
 package org.help.client
 
-import com.alibaba.fastjson.JSONObject
+import com.alibaba.fastjson.JSON
 import org.help.protocol.Data
 import org.help.protocol.Protoc
 import org.help.protocol.Protocol
@@ -11,9 +11,6 @@ import org.help.protocol.model.Ping
 import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -96,7 +93,6 @@ class Client(private val host: String, private val port: Int) : Protoc {
         while (ALIVE) {
             val data = Data()
             input.read(data.dataHead)
-            data.dataHead.forEach { println(it) }
             val protocolType = data.getProtocolType()
             when (protocolType) {
                 Protocol.PONG -> {
@@ -107,9 +103,8 @@ class Client(private val host: String, private val port: Int) : Protoc {
                 Protocol.MESSAGE -> {
                     data.dataContent = ByteArray(data.getDataContentLen())
                     input.read(data.dataContent)
-                    println(String(data.dataContent, StandardCharsets.UTF_8))
-//                    val order: Order = JSONObject.parse(data.dataContent) as Order
-//                    println("通知到客户: $order")
+                    val order: Order = JSON.parseObject(data.dataContent, Order::class.java)
+                    println("通知到客户: $order")
                 }
 
                 else -> continue
@@ -129,7 +124,7 @@ class Client(private val host: String, private val port: Int) : Protoc {
     }
 
     companion object {
-        val HEARTBEAT = 1000 * 30L
+        val HEARTBEAT = 1000 * 40L
         var ALIVE = true
 
         @JvmStatic

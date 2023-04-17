@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"net"
+	"server/internal"
 	"sync"
 )
 
@@ -60,10 +61,11 @@ func (c *Container) get(uuid string) *User {
 }
 
 // 根据uuid匹配连接
-func (c *Container) matchConn(uuid string) (net.Conn, error) {
-	user := c.get(uuid)
+func (c *Container) matchConn(order internal.Order) (net.Conn, error) {
+	//获得顾客的uuid以便通知他
+	user := c.get(order.CustomerUuid)
 	if user != nil {
 		return user.conn, nil
 	}
-	return nil, errors.New(`名为` + uuid + `的User不存在`)
+	return nil, errors.New(`user不存在`)
 }
