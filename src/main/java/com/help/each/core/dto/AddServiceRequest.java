@@ -31,7 +31,7 @@ public class AddServiceRequest {
     private String keywords;
 
     @Min(value = 0, message = "服务的价格最小不能为0")
-    private Double pointsPrice;
+    private Float pointsPrice;
 
     private String pictures;
     /*

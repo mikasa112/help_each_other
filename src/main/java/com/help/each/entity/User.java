@@ -25,4 +25,5 @@ public class User extends BaseModel implements Serializable {
     private String email;
     private String phone;
     private int age;
+    private Float points;
 }

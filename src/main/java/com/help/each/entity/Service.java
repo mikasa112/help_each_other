@@ -44,7 +44,7 @@ public class Service extends BaseModel {
     /*
     服务的价格(积分)
      */
-    private Double pointsPrice;
+    private Float pointsPrice;
     /*
     服务的相关图片(以;分割)
      */
