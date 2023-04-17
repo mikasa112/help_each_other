@@ -138,7 +138,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     /*
     包装一下，以不变应万变
      */
-    @Cacheable(value = "service:page:user", key = "#uuid+'-'+#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
+    @Cacheable(value = "service:page", key = "#uuid+'-'+#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
     public PageResult<Service> getServicesWrap(String uuid, Long currentPage, Long pageSize, String sortBy,
                                                String order) {
         //这是查count的
@@ -197,7 +197,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     /*
     包装
      */
-    @Cacheable(value = "service:page:names", key = "#name+'-'+#currentPage+'-'+#pageSize")
+    @Cacheable(value = "service:page", key = "#name+'-'+#currentPage+'-'+#pageSize")
     public PageResult<Service> getServicesNameWrap(String name, Long currentPage, Long pageSize) {
         Page<Service> page = new Page<>();
         page.setCurrent(currentPage);
@@ -216,9 +216,8 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
 
     @Override
     @Caching(evict = {@CacheEvict(value = "service:page", allEntries = true),
-            @CacheEvict(value = "service", key = "#serviceId"),
-            @CacheEvict(value = "service:page:names", allEntries = true),
-            @CacheEvict(value = "service:page:user", allEntries = true)})
+            @CacheEvict(value = "service", key = "#serviceId")
+    })
     public ApiResponse updateService(Long serviceId, Service service) {
         boolean b = mapper.update(service,
                 Wrappers.lambdaQuery(Service.class)
@@ -233,8 +232,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     @Caching(evict = {
             @CacheEvict(value = "service", key = "#serviceId"),
             @CacheEvict(value = "service:page", allEntries = true),
-            @CacheEvict(value = "service:page:names", allEntries = true),
-            @CacheEvict(value = "service:page:user", allEntries = true)})
+            @CacheEvict(value = "service:visited_count", key = "#serviceId")})
     public ApiResponse removeService(Long serviceId) {
         return ApiResponse.PrintlnApiResponse(mapper.delete(
                         Wrappers.lambdaQuery(Service.class)
