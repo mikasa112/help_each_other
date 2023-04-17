@@ -22,18 +22,18 @@ public interface OrderService extends IService<Order> {
     /**
      * 用户确认服务者
      *
-     * @param uuid      用户UUID
-     * @param serviceId 服务ID
+     * @param uuid    用户UUID
+     * @param orderId 订单ID
      */
-    ApiResponse confimOrder(String uuid, Long serviceId);
+    ApiResponse confimOrder(String uuid, Long orderId);
 
     /**
      * 用户完成服务工作订单
      *
-     * @param uuid      用户UUID
-     * @param serviceId 服务ID
+     * @param uuid    用户UUID
+     * @param orderId 订单ID
      */
-    ApiResponse finishOrder(String uuid, Long serviceId);
+    ApiResponse finishOrder(String uuid, Long orderId);
 
     /**
      * 查询全部的订单(管理员操作)
@@ -63,5 +63,5 @@ public interface OrderService extends IService<Order> {
      * @param uuid    用户UUID
      * @param orderId 订单ID
      */
-    ApiResponse removeOrder(String uuid, Integer orderId);
+    ApiResponse removeOrder(String uuid, Long orderId);
 }

@@ -40,6 +40,12 @@ public enum Status implements IStatus {
     SERVICE_REMOVE_FAILED(6002, "服务删除失败"),
     SERVICE_UPDATE_FAILED(6003, "服务更新失败"),
 
+    /*
+      订单的状态
+     */
+    ORDER_CREATE_FAILED(7001, "订单创建失败"),
+    ORDER_EXCEPTION(7002, "订单异常"),
+    ORDER_REMOVE_FAILED(7003, "订单删除失败"),
     ;
 
     private final Integer code;
