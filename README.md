@@ -1,2 +1,14 @@
 <h1>助老互帮平台毕业设计后台系统</h1>
-<strong>技术栈spring boot+spring security+mybatis-plus+redis</strong>
+<strong>技术栈spring boot+spring security+mybatis-plus+redis，外带Go实现的一个IM通讯转发系统</strong>
+
+<strong>本系统提供两个角色，分别是admin和user。其中user按照功能来区分的话有provider(服务提供者)和consumer(
+服务消费者)</strong>
+
+<h2>一些问题</h2>
+
+- 在服务消费者创建服务时必须判断自己的积分是否足够满足服务定义时的积分，如果不够的话，创建失败。
+- 在服务消费者创建服务成功后，应该马上把积分给扣除掉。如果用户取消掉服务则把积分还回去，如果用户订单完成后积分添加给服务提供者。
+- 当用户使用移动应用时，会将自己的uuid发送给IM服务器。
+- 在服务提供者选择服务接单后，将订单的消息传递到redis中，使用redis作为消息队列传递给IM服务器，IM服务器会轮询用户容器，然后根据订单的Status去选择将订单信息发送给那个用户。
+- 用户的积分应该是通过真正的钱去换过来的。
+

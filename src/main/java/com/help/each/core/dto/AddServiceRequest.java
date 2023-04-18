@@ -1,6 +1,5 @@
 package com.help.each.core.dto;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -22,22 +21,22 @@ public class AddServiceRequest {
     /*
     服务的介绍
      */
-    @Max(value = 255, message = "服务的详细介绍最长为255个字符")
+    @Length(max = 255, message = "服务的详细介绍最长为255个字符")
     private String introduction;
     /*
     服务的关键字
      */
-    @Max(value = 255, message = "服务的关键字最长为255个字符")
+    @Length(max = 255, message = "服务的关键字最长为255个字符")
     private String keywords;
 
-    @Min(value = 0, message = "服务的价格最小不能为0")
+    @Min(value = 0L, message = "服务的价格最小不能为0")
     private Float pointsPrice;
 
     private String pictures;
     /*
     所需服务的地址
      */
-    @Max(value = 255, message = "所需服务的地址最长为255个字符")
+    @Length(max = 255, message = "所需服务的地址最长为255个字符")
     private String address;
 
 }

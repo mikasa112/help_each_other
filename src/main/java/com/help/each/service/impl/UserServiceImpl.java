@@ -38,21 +38,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     ".concat('-')" +
                     ".concat(#order)")
     public ApiResponse list(Long currentPage, Long pageSize, String sortBy, String order) {
-//删除冗余代码
-//        if (Objects.isNull(sortBy) || sortBy.isEmpty()) {
-//            sortBy = "id";
-//        }
-// 这段代码重复出现，重构之
-//        Page<User> page = new Page<>();
-//        page.setSize(pageSize);
-//        page.setCurrent(currentPage);
-//        List<OrderItem> orderItemList = switch (order) {
-//            case DESC_ORDER -> List.of(OrderItem.desc(sortBy));
-//            default -> List.of(OrderItem.asc(sortBy));
-//        };
-//        page.setOrders(orderItemList);
-//        userMapper.selectPage(page, new QueryWrapper<>());
-//        List<User> users = page.getRecords();
         List<User> users = PageResult.GetDefaultPageList(userMapper, new QueryWrapper<>(), currentPage, pageSize, sortBy, order);
         PageResult<User> pageResult = PageResult.Of(users, count(), currentPage, pageSize);
         return ApiResponse.OfStatus(Status.OK, pageResult);
@@ -68,9 +53,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     //清空缓存
     @CacheEvict(value = "user:page", allEntries = true)
+    @CachePut(value = "user", key = "#uuid")
     public ApiResponse updateUserInfo(String uuid, User user) {
-        return ApiResponse.PrintlnApiResponse(userMapper.update(user,
-                Wrappers.lambdaQuery(User.class).eq(User::getUuid, uuid)) >= 1, "更新成功", Status.USER_UPDATE_FAILED);
+        if (userMapper.update(user,
+                Wrappers.lambdaQuery(User.class).eq(User::getUuid, uuid)) >= 1) {
+            return getUserInfoByUuid(uuid);
+        }
+        return ApiResponse.OfStatus(Status.USER_UPDATE_FAILED);
     }
 
     @Override

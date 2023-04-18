@@ -39,13 +39,15 @@ public enum Status implements IStatus {
     SERVICE_CREATE_FAILED(6001, "服务创建失败"),
     SERVICE_REMOVE_FAILED(6002, "服务删除失败"),
     SERVICE_UPDATE_FAILED(6003, "服务更新失败"),
-
+    USER_POINTS_NOT_ENOUGH(6004, "您的积分不足以申请服务"),
     /*
       订单的状态
      */
     ORDER_CREATE_FAILED(7001, "订单创建失败"),
     ORDER_EXCEPTION(7002, "订单异常"),
     ORDER_REMOVE_FAILED(7003, "订单删除失败"),
+    ORDER_PAY_FAILED(7004, "订单支付失败"),
+    ORDER_TIMEOUT(7005, "订单已超时"),
     /*
     积分的状态
      */

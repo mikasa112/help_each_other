@@ -65,8 +65,10 @@ public class ServiceController {
     }
 
     @DeleteMapping("{serviceId}")
-    public ApiResponse remove(@PathVariable("serviceId") Long serviceId) {
-        return service.removeService(serviceId);
+    public ApiResponse remove(Authentication authentication, @PathVariable("serviceId") Long serviceId) {
+        MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+        String uuid = userDetails.getUser().getUuid();
+        return service.removeService(uuid, serviceId);
     }
 
     @PostMapping

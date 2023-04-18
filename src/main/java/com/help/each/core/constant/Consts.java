@@ -17,12 +17,6 @@ public interface Consts {
      */
     String SERVICE_VISITED_KEY_PREFIX = "service:visited_count:";
 
-    /*
-       订单redis key前缀
-     */
-    String ORDER_KEY_PREFIX = "order:";
-
-
     Long DEFAULT_PAGE_SIZE = 10L;
 
     /*
@@ -44,4 +38,9 @@ public interface Consts {
      * 令牌开头
      */
     String BEARER = "Bearer ";
+
+    String SYS_POINT_REMARK_SUB = "系统扣除";
+    String SYS_POINT_REMARK_ADD = "系统添加";
+    String SYS_ORDER_FINISH = "订单完成";
 }
+

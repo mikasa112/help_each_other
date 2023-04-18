@@ -3,6 +3,7 @@ package com.help.each.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.help.each.core.vo.ApiResponse;
 import com.help.each.entity.Order;
+import com.help.each.entity.Service;
 
 /**
  * @author Yuanan
@@ -12,7 +13,7 @@ import com.help.each.entity.Order;
 public interface OrderService extends IService<Order> {
 
     /**
-     * 用户接单
+     * 服务提供者接单
      *
      * @param uuid      用户UUID
      * @param serviceId 服务ID
@@ -20,7 +21,7 @@ public interface OrderService extends IService<Order> {
     ApiResponse takeOrder(String uuid, Long serviceId);
 
     /**
-     * 用户确认服务者
+     * 服务消费者确认服务者
      *
      * @param uuid    用户UUID
      * @param orderId 订单ID
@@ -28,7 +29,7 @@ public interface OrderService extends IService<Order> {
     ApiResponse confimOrder(String uuid, Long orderId);
 
     /**
-     * 用户完成服务工作订单
+     * 服务提供者完成服务工作订单
      *
      * @param uuid    用户UUID
      * @param orderId 订单ID
@@ -64,4 +65,27 @@ public interface OrderService extends IService<Order> {
      * @param orderId 订单ID
      */
     ApiResponse removeOrder(String uuid, Long orderId);
+
+    /**
+     * 订单支付
+     *
+     * @param uuid    消费者UUID
+     * @param orderId 订单ID
+     */
+    ApiResponse payOrder(String uuid, Long orderId);
+
+    /**
+     * 根据用户ID和订单ID获取服务
+     *
+     * @param uuid    用户ID
+     * @param orderId 订单ID
+     */
+    Service getService(String uuid, Long orderId);
+
+    /**
+     * 根据ID获得订单
+     *
+     * @param orderId 订单ID
+     */
+    Order getOrder(Long orderId);
 }

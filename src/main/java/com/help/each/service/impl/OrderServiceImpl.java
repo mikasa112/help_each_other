@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.help.each.core.constant.Consts;
+import com.help.each.core.constant.OrderStatus;
 import com.help.each.core.constant.Status;
 import com.help.each.core.util.RedisUtil;
 import com.help.each.core.vo.ApiResponse;
@@ -14,6 +16,8 @@ import com.help.each.entity.Order;
 import com.help.each.mapper.OrderMapper;
 import com.help.each.mapper.ServiceMapper;
 import com.help.each.service.OrderService;
+import com.help.each.service.PointsService;
+import com.help.each.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,6 +42,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     final OrderMapper orderMapper;
     final ServiceMapper serviceMapper;
+    final UserService userService;
+    final PointsService pointsService;
     final RedisUtil redisUtil;
     final RedisTemplate<Object, Object> redisTemplate;
     private static final String ORDER_KEY = "orders:";
@@ -52,7 +59,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .setServiceId(serviceId)
                 .setProviderUuid(uuid)
                 .setCustomerUuid(customer.getUuid())
-                .setStatus(0)
+                .setStatus(OrderStatus.AWAIT.getCode())
                 .setPay(0);
         //推送订单已接单
         redisTemplate.convertAndSend("order", order);
@@ -64,10 +71,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public ApiResponse confimOrder(String uuid, Long orderId) {
         Object o = redisUtil.getObject(ORDER_KEY + orderId);
+        if (Objects.isNull(o)) {
+            return ApiResponse.OfStatus(Status.ORDER_TIMEOUT);
+        }
         Order order = JSON.parseObject(o.toString(), Order.class);
         //更新订单状态和服务时间
-        order.setStatus(1).setStartAt(LocalDateTime.now());
+        order.setStatus(OrderStatus.WORKING.getCode()).setStartAt(LocalDateTime.now());
         if (orderMapper.insert(order) >= 1) {
+            //推送订单以确认
             redisTemplate.convertAndSend("order", order);
             return ApiResponse.OfStatus(Status.OK);
         }
@@ -78,7 +89,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public ApiResponse finishOrder(String uuid, Long orderId) {
         Order order = new Order()
                 .setEndAt(LocalDateTime.now())
-                .setStatus(2);
+                .setStatus(OrderStatus.FINISH.getCode());
         int update = orderMapper.update(order, Wrappers
                 .lambdaUpdate(Order.class)
                 .eq(Order::getOrderId, orderId));
@@ -86,6 +97,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             //更新redis中的order
             redisUtil.setObject(ORDER_KEY + orderId, order);
             redisUtil.deleteObject(ORDER_KEY + "page");
+            //推送订单已完成
+            redisTemplate.convertAndSend("order", order);
             return ApiResponse.OfStatus(Status.OK);
         }
         return ApiResponse.OfStatus(Status.ORDER_EXCEPTION);
@@ -116,5 +129,37 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return ApiResponse.OfStatus(Status.OK);
         }
         return ApiResponse.OfStatus(Status.ORDER_REMOVE_FAILED);
+    }
+
+    @Override
+    @CacheEvict(value = "orders:page", allEntries = true)
+    public ApiResponse payOrder(String uuid, Long orderId) {
+        Order order = new Order();
+        order.setPay(1);
+        if (orderMapper.update(order, Wrappers.lambdaUpdate(Order.class).eq(Order::getOrderId, orderId)) >= 1) {
+            com.help.each.entity.Service service = this.getService(uuid, orderId);
+            Order o = this.getOrder(orderId);
+            //给服务提供者修改积分
+            if (pointsService.addPointRecord(o.getProviderUuid(), orderId, service.getPointsPrice(), Consts.SYS_ORDER_FINISH)
+                    .getCode().equals(Status.OK.getCode())) {
+                return ApiResponse.OfStatus(Status.OK);
+            }
+        }
+        return ApiResponse.OfStatus(Status.ORDER_PAY_FAILED);
+    }
+
+    @Override
+    public com.help.each.entity.Service getService(String uuid, Long orderId) {
+        Order order = this.getOrder(orderId);
+        return serviceMapper
+                .selectOne(Wrappers
+                        .lambdaQuery(com.help.each.entity.Service.class)
+                        .eq(com.help.each.entity.Service::getServiceId,
+                                order.getServiceId()));
+    }
+
+    @Override
+    public Order getOrder(Long orderId) {
+        return orderMapper.selectOne(Wrappers.lambdaQuery(Order.class).eq(Order::getOrderId, orderId));
     }
 }

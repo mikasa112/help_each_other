@@ -52,6 +52,13 @@ public class OrderController {
         return orderService.confimOrder(uuid, request.getOrderId());
     }
 
+    @PostMapping("pay")
+    public ApiResponse payOrder(Authentication authentication, @RequestBody @Valid OrderParamRequest request) {
+        MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+        String uuid = userDetails.getUser().getUuid();
+        return orderService.payOrder(uuid, request.getOrderId());
+    }
+
     @PostMapping("finish")
     public ApiResponse finishOrder(Authentication authentication, @RequestBody @Valid OrderParamRequest request) {
         MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();

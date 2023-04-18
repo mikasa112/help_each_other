@@ -32,7 +32,7 @@ public class ServiceServiceTest {
     @Test
     public void testInsert() {
         Service s = new Service();
-        s.setUuid(ADMIN_UUID).setServiceId(IdUtil.getSnowflakeNextId()).setName("这个是测试服务").setIntroduction("这是测试这是测试这是测试这是测试这是测试这是测试").setKeywords("这是测试").setPointsPrice(20D);
+        s.setUuid(ADMIN_UUID).setServiceId(IdUtil.getSnowflakeNextId()).setName("这个是测试服务").setIntroduction("这是测试这是测试这是测试这是测试这是测试这是测试").setKeywords("这是测试").setPointsPrice(10F);
         ApiResponse apiResponse = service.addService(s);
         Assertions.assertEquals(apiResponse.getCode(), 200);
     }
@@ -63,7 +63,7 @@ public class ServiceServiceTest {
 
     @Test
     public void testDelete() {
-        ApiResponse api = service.removeService(1644563071778496512L);
+        ApiResponse api = service.removeService(ADMIN_UUID, 1644563071778496512L);
         Assertions.assertEquals(api.getCode(), 200);
     }
 

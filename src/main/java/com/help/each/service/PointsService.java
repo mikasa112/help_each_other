@@ -15,8 +15,8 @@ public interface PointsService extends IService<Points> {
      * 当用户的积分发生变化时，添加一条积分记录
      *
      * @param uuid    {@link com.help.each.entity.User} uuid
-     * @param record  记录
      * @param orderId {@link com.help.each.entity.Order} 订单ID
+     * @param record  积分记录
      * @param remark  备注
      */
     ApiResponse addPointRecord(String uuid, Long orderId, Float record, String remark);

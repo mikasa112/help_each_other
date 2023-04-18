@@ -84,8 +84,9 @@ public interface ServiceService extends IService<Service> {
     /**
      * 删除单个服务by服务ID
      *
+     * @param uuid      用户ID
      * @param serviceId 服务ID
      * @return {@link ApiResponse}
      */
-    ApiResponse removeService(Long serviceId);
+    ApiResponse removeService(String uuid, Long serviceId);
 }

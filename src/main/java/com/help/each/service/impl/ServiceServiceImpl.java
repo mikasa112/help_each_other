@@ -7,22 +7,29 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.core.constant.Consts;
+import com.help.each.core.constant.Role;
 import com.help.each.core.constant.Status;
 import com.help.each.core.dto.AddServiceRequest;
+import com.help.each.core.exception.BaseException;
 import com.help.each.core.util.RedisUtil;
+import com.help.each.core.util.Util;
 import com.help.each.core.vo.ApiResponse;
 import com.help.each.core.vo.PageResult;
 import com.help.each.entity.Service;
+import com.help.each.entity.User;
 import com.help.each.mapper.ServiceMapper;
+import com.help.each.service.PointsService;
 import com.help.each.service.ServiceService;
+import com.help.each.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -31,6 +38,7 @@ import java.util.List;
  * @description 服务实现类
  */
 @org.springframework.stereotype.Service
+@Slf4j
 @RequiredArgsConstructor
 //todo 2023/4/9 写的有瑕疵，代码冗余记得修改
 public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> implements
@@ -38,6 +46,8 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
 
     final ServiceMapper mapper;
     final RedisUtil redisUtil;
+    final UserService userService;
+    final PointsService pointsService;
     //这个地方使用这个是为了使诸如@CachePut的注解生效
     final ApplicationContext applicationContext;
 
@@ -62,11 +72,16 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
      * @param service {@link Service}
      */
     @Override
-    @CachePut(value = "service", key = "#service.serviceId")
     public ApiResponse addService(Service service) {
         boolean b = mapper.insert(service) >= 1;
         if (!b) {
             return ApiResponse.OfStatus(Status.SERVICE_CREATE_FAILED);
+        }
+        //如果是常规用户才操作积分
+        User user = (User) userService.getUserInfoByUuid(service.getUuid()).getData();
+        if (Role.USER.equals(user.getRole())) {
+            //当服务消费者创建服务成功时，系统先将积分扣除
+            pointsService.addPointRecord(service.getUuid(), null, Util.NegativeNum(service.getPointsPrice()), Consts.SYS_POINT_REMARK_SUB);
         }
         return this.getService(service.getServiceId());
     }
@@ -80,8 +95,14 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
      */
     @Override
     public Service createService(String uuid, AddServiceRequest r) {
+        User user = (User) userService.getUserInfoByUuid(uuid).getData();
+        //如果用户的积分不够，则创建失败
+        if (Objects.isNull(r.getPointsPrice())
+                || Objects.isNull(user.getPoints())
+                || r.getPointsPrice() > user.getPoints()) {
+            throw new BaseException(Status.USER_POINTS_NOT_ENOUGH);
+        }
         long id = IdUtil.getSnowflakeNextId();
-        addVisited(id);
         return new Service(id, uuid, r.getName(),
                 r.getIntroduction(), r.getKeywords(), r.getPointsPrice(), r.getPictures(), r.getAddress(), 1, 0);
     }
@@ -233,10 +254,21 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
             @CacheEvict(value = "service", key = "#serviceId"),
             @CacheEvict(value = "service:page", allEntries = true),
             @CacheEvict(value = "service:visited_count", key = "#serviceId")})
-    public ApiResponse removeService(Long serviceId) {
-        return ApiResponse.PrintlnApiResponse(mapper.delete(
-                        Wrappers.lambdaQuery(Service.class)
-                                .eq(Service::getServiceId, serviceId)) >= 1, "删除服务成功",
-                Status.SERVICE_REMOVE_FAILED);
+    public ApiResponse removeService(String uuid, Long serviceId) {
+
+        if (mapper.delete(
+                Wrappers.lambdaQuery(Service.class)
+                        .eq(Service::getServiceId, serviceId)) >= 1) {
+            User user = (User) userService.getUserInfoByUuid(uuid).getData();
+            //如果是常规用户才操作积分
+            if (Role.USER.equals(user.getRole())) {
+                ServiceServiceImpl serviceImpl = applicationContext.getBean(this.getClass());
+                Service service = serviceImpl.getServiceWrap(serviceId);
+                //当服务消费者取消/删除服务成功时，系统先将积分还给用户
+                pointsService.addPointRecord(uuid, null, service.getPointsPrice(), Consts.SYS_POINT_REMARK_ADD);
+            }
+            return ApiResponse.OfStatus(Status.OK);
+        }
+        return ApiResponse.OfStatus(Status.SERVICE_REMOVE_FAILED);
     }
 }

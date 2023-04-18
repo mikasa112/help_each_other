@@ -65,6 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setAge(request.getAge());
+        user.setPoints(0F);
         return ApiResponse.PrintlnApiResponse(userMapper.insert(user) >= 1, "注册成功", Status.ERROR);
     }
 
