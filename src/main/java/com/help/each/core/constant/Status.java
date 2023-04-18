@@ -46,6 +46,11 @@ public enum Status implements IStatus {
     ORDER_CREATE_FAILED(7001, "订单创建失败"),
     ORDER_EXCEPTION(7002, "订单异常"),
     ORDER_REMOVE_FAILED(7003, "订单删除失败"),
+    /*
+    积分的状态
+     */
+    POINTS_CREATE_FAILED(8001, "积分记录添加失败"),
+    POINTS_REMOVE_FAILED(8002, "积分记录删除失败"),
     ;
 
     private final Integer code;
