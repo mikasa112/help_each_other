@@ -68,6 +68,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         //更新订单状态和服务时间
         order.setStatus(1).setStartAt(LocalDateTime.now());
         if (orderMapper.insert(order) >= 1) {
+            redisTemplate.convertAndSend("order", order);
             return ApiResponse.OfStatus(Status.OK);
         }
         return ApiResponse.OfStatus(Status.ORDER_CREATE_FAILED);

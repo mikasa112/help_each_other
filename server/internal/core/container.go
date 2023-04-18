@@ -62,8 +62,24 @@ func (c *Container) get(uuid string) *User {
 
 // 根据uuid匹配连接
 func (c *Container) matchConn(order internal.Order) (net.Conn, error) {
+	var user *User
+	switch order.Status {
+	//等待顾客同意
+	case 0:
+		//通知顾客
+		user = c.get(order.CustomerUuid)
+	//正在进行
+	case 1:
+		//通知服务提供者
+		user = c.get(order.ProviderUuid)
+	//已完成
+	case 2:
+	//异常
+	case 3:
+	//取消
+	case 4:
+	}
 	//获得顾客的uuid以便通知他
-	user := c.get(order.CustomerUuid)
 	if user != nil {
 		return user.conn, nil
 	}
