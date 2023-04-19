@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.core.constant.Consts;
 import com.help.each.core.constant.OrderStatus;
+import com.help.each.core.constant.ServiceStatus;
 import com.help.each.core.constant.Status;
 import com.help.each.core.util.RedisUtil;
 import com.help.each.core.vo.ApiResponse;
@@ -17,6 +18,7 @@ import com.help.each.mapper.OrderMapper;
 import com.help.each.mapper.ServiceMapper;
 import com.help.each.service.OrderService;
 import com.help.each.service.PointsService;
+import com.help.each.service.ServiceService;
 import com.help.each.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     final PointsService pointsService;
     final RedisUtil redisUtil;
     final RedisTemplate<Object, Object> redisTemplate;
+    final ServiceService serviceService;
     private static final String ORDER_KEY = "orders:";
 
     @Override
@@ -80,6 +83,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (orderMapper.insert(order) >= 1) {
             //推送订单以确认
             redisTemplate.convertAndSend("order", order);
+            //当服务消费者确认一个服务提供者时,更新服务的状态为1（已接单）
+            serviceService.updateService(getService(uuid, orderId).getServiceId()
+                    , new com.help.each.entity.Service().setStatus(ServiceStatus.TAKE_SERVICE.getCode()));
             return ApiResponse.OfStatus(Status.OK);
         }
         return ApiResponse.OfStatus(Status.ORDER_CREATE_FAILED);
@@ -99,6 +105,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             redisUtil.deleteObject(ORDER_KEY + "page");
             //推送订单已完成
             redisTemplate.convertAndSend("order", order);
+            //当服务提供者确认订单完成时,更新服务的状态为2（已完成）
+            serviceService.updateService(getService(uuid, orderId).getServiceId()
+                    , new com.help.each.entity.Service().setStatus(ServiceStatus.FINISH_SERVICE.getCode()));
             return ApiResponse.OfStatus(Status.OK);
         }
         return ApiResponse.OfStatus(Status.ORDER_EXCEPTION);
