@@ -70,4 +70,8 @@ public class Order extends BaseModel {
     订单支付状态(0未支付,1已支付)
      */
     private Integer pay;
+    /*
+   接单人完成服务的评价(0-5)分
+     */
+    private Integer evaluate;
 }

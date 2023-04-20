@@ -6,6 +6,7 @@ import com.help.each.service.ServiceCategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,16 +30,19 @@ public class ServiceCategoryController {
     }
 
     @PostMapping
+    @Secured("admin")
     public ApiResponse put(@RequestBody @Valid CategoryParamRequest request) {
         return service.addServiceCategory(request.getCategory(), request.getDescribe(), request.getNotes());
     }
 
     @PutMapping("{id}")
+    @Secured("admin")
     public ApiResponse update(@PathVariable("id") Integer id, @RequestBody @Valid CategoryParamRequest request) {
         return service.updateServiceCategory(id, request.getCategory(), request.getDescribe(), request.getNotes());
     }
 
     @DeleteMapping("{id}")
+    @Secured("admin")
     public ApiResponse remove(@PathVariable("id") Integer id) {
         return service.removeServiceCategory(id);
     }

@@ -56,7 +56,7 @@ public class OrderController {
     public ApiResponse payOrder(Authentication authentication, @RequestBody @Valid OrderParamRequest request) {
         MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
         String uuid = userDetails.getUser().getUuid();
-        return orderService.payOrder(uuid, request.getOrderId());
+        return orderService.payOrder(uuid, request.getOrderId(), request.getEvaluate());
     }
 
     @PostMapping("finish")

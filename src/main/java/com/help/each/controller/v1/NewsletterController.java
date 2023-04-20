@@ -7,6 +7,7 @@ import com.help.each.service.NewsletterService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,16 +30,19 @@ public class NewsletterController {
     }
 
     @PostMapping
+    @Secured("admin")
     public ApiResponse put(@RequestBody @Valid NewsletterParamRequest request) {
         return service.putNewsletter(request.getContent());
     }
 
     @PutMapping("{id}")
+    @Secured("admin")
     public ApiResponse update(@PathVariable("id") Integer id, @RequestBody @Valid NewsletterParamRequest request) {
         return service.updateNewsletter(id, request.getContent());
     }
 
     @DeleteMapping("{id}")
+    @Secured("admin")
     public ApiResponse remove(@PathVariable("id") Integer id) {
         return service.removeNewsletter(id);
     }

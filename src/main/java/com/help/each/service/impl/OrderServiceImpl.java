@@ -142,15 +142,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @CacheEvict(value = "orders:page", allEntries = true)
-    public ApiResponse payOrder(String uuid, Long orderId) {
+    public ApiResponse payOrder(String uuid, Long orderId, Integer evaluate) {
         Order order = new Order();
         order.setPay(1);
+        order.setEvaluate(evaluate);
         if (orderMapper.update(order, Wrappers.lambdaUpdate(Order.class).eq(Order::getOrderId, orderId)) >= 1) {
             com.help.each.entity.Service service = this.getService(uuid, orderId);
             Order o = this.getOrder(orderId);
             //给服务提供者修改积分
             if (pointsService.addPointRecord(o.getProviderUuid(), orderId, service.getPointsPrice(), Consts.SYS_ORDER_FINISH)
                     .getCode().equals(Status.OK.getCode())) {
+                //删除服务提供者的Redis中的信息
+                redisUtil.deleteObject("user:" + o.getProviderUuid());
                 return ApiResponse.OfStatus(Status.OK);
             }
         }

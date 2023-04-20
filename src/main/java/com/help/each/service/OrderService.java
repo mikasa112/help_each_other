@@ -69,10 +69,11 @@ public interface OrderService extends IService<Order> {
     /**
      * 订单支付
      *
-     * @param uuid    消费者UUID
-     * @param orderId 订单ID
+     * @param uuid     消费者UUID
+     * @param orderId  订单ID
+     * @param evaluate 评价
      */
-    ApiResponse payOrder(String uuid, Long orderId);
+    ApiResponse payOrder(String uuid, Long orderId, Integer evaluate);
 
     /**
      * 根据用户ID和订单ID获取服务
