@@ -15,5 +15,10 @@ public class UtilTest {
     public void test() {
         Float aFloat = Util.NegativeNum(123F);
         Assertions.assertEquals(aFloat, -123F);
+        Long a = 1L;
+        Integer b = 3;
+        String c = "S";
+        String s = Util.ComposeString(a, b, c);
+        System.out.println(s);
     }
 }

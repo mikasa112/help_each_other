@@ -59,6 +59,11 @@ public enum Status implements IStatus {
     CATEGORY_CREATE_FAILED(9001, "服务分类创建失败"),
     CATEGORY_UPDATE_FAILED(9002, "服务分类更新失败"),
     CATEGORY_REMOVE_FAILED(9003, "服务分类删除失败"),
+
+    COMMENT_CREATE_FAILED(10001, "评论创建失败"),
+    COMMENT_UPDATE_FAILED(10002, "评论修改失败"),
+    COMMENT_REMOVE_FAILED(10003, "评论创建失败"),
+    COMMENT_LIKE_FAILED(10004, "评论点赞失败"),
     ;
 
 
