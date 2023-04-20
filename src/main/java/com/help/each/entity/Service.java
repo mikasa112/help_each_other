@@ -67,6 +67,11 @@ public class Service extends BaseModel {
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Integer status;
 
+    /*
+    服务的分类
+    */
+    private Integer category;
+
     public Integer getVisited() {
         if (Objects.isNull(visited)) {
             return 0;

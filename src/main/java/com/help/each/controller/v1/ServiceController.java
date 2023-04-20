@@ -79,4 +79,9 @@ public class ServiceController {
         return service.addService(s);
     }
 
+    @GetMapping("/category/{id}")
+    public ApiResponse indexCategory(@PathVariable("id") Integer id, PageParamRequest request) {
+        return service.getSercices(id, request.getPage(), request.getSize(), request.getSort(), request.getOrder());
+    }
+
 }

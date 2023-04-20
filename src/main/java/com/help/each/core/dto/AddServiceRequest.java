@@ -2,6 +2,7 @@ package com.help.each.core.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -38,5 +39,8 @@ public class AddServiceRequest {
      */
     @Length(max = 255, message = "所需服务的地址最长为255个字符")
     private String address;
+
+    @NotNull(message = "服务分类的ID不能为空")
+    private Integer category;
 
 }

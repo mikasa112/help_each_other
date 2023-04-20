@@ -53,6 +53,18 @@ public interface ServiceService extends IService<Service> {
      */
     ApiResponse getServices(Long currentPage, Long pageSize, String sortBy, String order);
 
+
+    /**
+     * 获得服务类型的服务列表
+     *
+     * @param category    服务类型ID
+     * @param currentPage 当前页
+     * @param pageSize    每页多大
+     * @param sortBy      以什么排序
+     * @param order       排序顺序默认asc
+     */
+    ApiResponse getSercices(Integer category, Long currentPage, Long pageSize, String sortBy, String order);
+
     /**
      * 根据serviceId 获取服务详情
      *

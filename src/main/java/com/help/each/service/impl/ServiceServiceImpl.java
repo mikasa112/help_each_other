@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.core.constant.Consts;
 import com.help.each.core.constant.Role;
+import com.help.each.core.constant.ServiceStatus;
 import com.help.each.core.constant.Status;
 import com.help.each.core.dto.AddServiceRequest;
 import com.help.each.core.exception.BaseException;
@@ -104,7 +105,8 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         }
         long id = IdUtil.getSnowflakeNextId();
         return new Service(id, uuid, r.getName(),
-                r.getIntroduction(), r.getKeywords(), r.getPointsPrice(), r.getPictures(), r.getAddress(), 1, 0);
+                r.getIntroduction(), r.getKeywords(), r.getPointsPrice(), r.getPictures(), r.getAddress(),
+                1, ServiceStatus.NOT_TAKE_SERVICE.getCode(), r.getCategory());
     }
 
 
@@ -126,12 +128,44 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         return ApiResponse.OfStatus(Status.OK, pageResult);
     }
 
+    /**
+     * 获得服务按服务分类和页数
+     *
+     * @param category    服务类型ID
+     * @param currentPage 当前页
+     * @param pageSize    每页多大
+     * @param sortBy      以什么排序
+     * @param order       排序顺序默认asc
+     */
+    @Override
+    public ApiResponse getSercices(Integer category, Long currentPage, Long pageSize, String sortBy, String order) {
+        ServiceServiceImpl ss = applicationContext.getBean(this.getClass());
+        PageResult<Service> pageResult = ss.getSercicesWrap(category, currentPage, pageSize, sortBy, order);
+        List<Service> list = pageResult.getList().stream().map(s -> s.setVisited(getVisited(s.getServiceId()))).toList();
+        pageResult.setList(list);
+        return ApiResponse.OfStatus(Status.OK, pageResult);
+    }
+
+
+    /*
+     包装一下以便获得visited
+     */
+    @Cacheable(value = "service:page", key = "#category+'-'+#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
+    public PageResult<Service> getSercicesWrap(Integer category, Long currentPage, Long pageSize, String sortBy, String order) {
+        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus)
+                .eq(Service::getCategory, category);
+        List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper,
+                currentPage, pageSize, sortBy, order);
+        return PageResult.Of(services, count(), currentPage, pageSize);
+    }
+
+
     /*
     包装一下以便获得visited
      */
     @Cacheable(value = "service:page", key = "#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
     public PageResult<Service> getServicesWrap(Long currentPage, Long pageSize, String sortBy, String order) {
-        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus);
+        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory);
         List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper,
                 currentPage, pageSize, sortBy, order);
         return PageResult.Of(services, count(), currentPage, pageSize);
@@ -228,7 +262,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
                 .like(Service::getName, name);
         Long count = mapper.selectCount(wrapper);
         //选择查询的字段
-        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus);
+        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory);
         mapper.selectPage(page, wrapper);
         List<Service> services = page.getRecords();
         return PageResult.Of(services, count, currentPage, pageSize);

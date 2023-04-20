@@ -53,7 +53,14 @@ public enum Status implements IStatus {
      */
     POINTS_CREATE_FAILED(8001, "积分记录添加失败"),
     POINTS_REMOVE_FAILED(8002, "积分记录删除失败"),
+    /*
+    服务分类
+     */
+    CATEGORY_CREATE_FAILED(9001, "服务分类创建失败"),
+    CATEGORY_UPDATE_FAILED(9002, "服务分类更新失败"),
+    CATEGORY_REMOVE_FAILED(9003, "服务分类删除失败"),
     ;
+
 
     private final Integer code;
     private final String message;
