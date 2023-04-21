@@ -44,6 +44,7 @@ http.interceptors.response.use(response => {
     }
 }, error => {
     NProgress.done();
+    Vue.prototype.$message.error(error.message)
     return Promise.reject(error)
 })
 
@@ -72,6 +73,34 @@ export function post(url, params) {
 export function get(url) {
     return new Promise((resolve, reject) => {
         http.get(url).then(res => {
+            resolve(res.data)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
+const ImageType = ["image/png", "image/jpeg", "image/jpg"]
+
+export function upload(url, file) {
+    const fileType = file.type
+    let formData = new FormData()
+    if (ImageType.includes(fileType)) {
+        formData.append("type", 1)
+    } else {
+        return Promise.reject("文件类型不支持")
+    }
+    formData.append("file", file)
+    const options = {
+        url: baseUrl + url,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        data: formData
+    }
+    return new Promise((resolve, reject) => {
+        axios(options).then(res => {
             resolve(res.data)
         }).catch(err => {
             reject(err)

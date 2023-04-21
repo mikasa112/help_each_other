@@ -49,11 +49,11 @@
 
 <script>
 import "animate.css";
-import {loginApi} from "@/api/api";
+import {getCurrentUser, loginApi} from "@/api/api";
 import Vcode from "vue-puzzle-vcode";
 
 export default {
-    name: "login_view",
+    name: "LoginView",
     data() {
         return {
             isShow: false,
@@ -98,15 +98,11 @@ export default {
         cancel() {
             this.$refs["ruleForm"].resetFields();
         },
-        onSuccess() {
+        async onSuccess() {
             this.isShow = false;
-            loginApi(this.user)
-                .then((res) => {
-                    sessionStorage.setItem("token", res.data);
-                    // this.$router.replace("admin");
-                })
-                .catch(() => {
-                });
+            let msg = await loginApi(this.user)
+            sessionStorage.setItem("token", msg);
+            await this.$router.replace({name: "home"});
         },
         onClose() {
             this.isShow = false;

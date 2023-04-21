@@ -14,7 +14,7 @@
 
 <script>
 export default {
-    name: "not_found",
+    name: "NotFoundView",
     mounted() {
         var str = document.getElementsByTagName('div')[0].innerHTML.toString();
         var i = 0;
