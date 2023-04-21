@@ -1,9 +1,17 @@
 import axios from "axios";
 import NProgress from "nprogress"
 import 'nprogress/nprogress.css'
+import Vue from "vue";
 
-const baseUrl = "http://127.0.0.1:8080/";
+const baseUrl = "http://192.168.1.112:8080/";
+// const baseUrl = "http://localhost:8080/";
 const Bearer = "Bearer ";
+
+let data = {
+    code: 404,
+    data: null,
+    message: "",
+}
 
 export const http = axios.create({
     timeout: 12000,
@@ -23,9 +31,17 @@ http.interceptors.request.use(config => {
     return config;
 })
 
+//响应拦截
 http.interceptors.response.use(response => {
     NProgress.done();
-    return response;
+    data = response.data;
+    if (data.code !== 200) {
+        //如果状态不为200,打印错误
+        Vue.prototype.$message.error(data.message)
+        return Promise.reject(data);
+    } else {
+        return data;
+    }
 }, error => {
     NProgress.done();
     return Promise.reject(error)
