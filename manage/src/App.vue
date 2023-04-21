@@ -4,11 +4,9 @@
     </div>
 </template>
 
-<script>
-
-</script>
-
 <style>
+html,
+body,
 #app {
     height: 100%;
     padding: 0;

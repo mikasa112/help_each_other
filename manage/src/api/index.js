@@ -1,9 +1,17 @@
 import axios from "axios";
 import NProgress from "nprogress"
 import 'nprogress/nprogress.css'
+import Vue from "vue";
 
-const baseUrl = "http://127.0.0.1:8080/";
+const baseUrl = "http://192.168.1.112:8080/";
+// const baseUrl = "http://localhost:8080/";
 const Bearer = "Bearer ";
+
+let data = {
+    code: 404,
+    data: null,
+    message: "",
+}
 
 export const http = axios.create({
     timeout: 12000,
@@ -23,11 +31,20 @@ http.interceptors.request.use(config => {
     return config;
 })
 
+//响应拦截
 http.interceptors.response.use(response => {
     NProgress.done();
-    return response;
+    data = response.data;
+    if (data.code !== 200) {
+        //如果状态不为200,打印错误
+        Vue.prototype.$message.error(data.message)
+        return Promise.reject(data);
+    } else {
+        return data;
+    }
 }, error => {
     NProgress.done();
+    Vue.prototype.$message.error(error.message)
     return Promise.reject(error)
 })
 
@@ -56,6 +73,34 @@ export function post(url, params) {
 export function get(url) {
     return new Promise((resolve, reject) => {
         http.get(url).then(res => {
+            resolve(res.data)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
+const ImageType = ["image/png", "image/jpeg", "image/jpg"]
+
+export function upload(url, file) {
+    const fileType = file.type
+    let formData = new FormData()
+    if (ImageType.includes(fileType)) {
+        formData.append("type", 1)
+    } else {
+        return Promise.reject("文件类型不支持")
+    }
+    formData.append("file", file)
+    const options = {
+        url: baseUrl + url,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        data: formData
+    }
+    return new Promise((resolve, reject) => {
+        axios(options).then(res => {
             resolve(res.data)
         }).catch(err => {
             reject(err)
