@@ -23,7 +23,7 @@ import java.io.IOException;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 public class UploadController {
     @Value("${spring.servlet.multipart.location}")
     private String fileTempPath;
@@ -41,7 +41,7 @@ public class UploadController {
         String rawFileName = StrUtil.subBefore(filename, ".", true);
         String fileType = StrUtil.subAfter(filename, ".", true);
         //返回文件的名字加上时间戳
-        String savedFileName = rawFileName + "-" + DateUtil.current() + "." + fileType;
+        String savedFileName = rawFileName + "." + fileType;
         String localFilePath = StrUtil.appendIfMissing(fileTempPath, "/") + savedFileName;
         try {
             file.transferTo(new File(localFilePath));

@@ -41,7 +41,7 @@ public class WebSecurityConfig {
                 .disable()
                 .authorizeHttpRequests()
                 //除了登录注册其他全部保护起来
-                .requestMatchers("/api/auth/**")
+                .requestMatchers("/api/auth/**", "/api/upload")
                 .permitAll()
                 //除了上面的其他全部需要授权
                 .anyRequest()
