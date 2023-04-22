@@ -101,7 +101,7 @@ export default {
         async onSuccess() {
             this.isShow = false;
             let msg = await loginApi(this.user)
-            sessionStorage.setItem("token", msg);
+            localStorage.setItem("token", msg);
             await this.$router.replace({name: "home"});
         },
         onClose() {
