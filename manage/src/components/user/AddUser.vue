@@ -174,7 +174,7 @@ export default {
                     if (this.user.sex !== "") {
                         user["sex"] = this.user.sex
                     }
-                    console.log(user)
+                    // console.log(user)
                     await registerApi(user)
                     this.$notify({
                         title: "成功",

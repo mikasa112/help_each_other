@@ -3,7 +3,7 @@ import NProgress from "nprogress"
 import 'nprogress/nprogress.css'
 import Vue from "vue";
 
-const baseUrl = "http://192.168.1.112:8080/";
+const baseUrl = "http://192.168.1.114:8080/";
 // const baseUrl = "http://localhost:8080/";
 const Bearer = "Bearer ";
 
@@ -24,7 +24,7 @@ export const http = axios.create({
 //请求拦截
 http.interceptors.request.use(config => {
     NProgress.start();
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
     if (token && token !== "") {
         config.headers["Authorization"] = Bearer + token;
     }
@@ -75,6 +75,40 @@ export function get(url) {
         http.get(url).then(res => {
             resolve(res.data)
         }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
+/**
+ * 发起delete请求
+ * @param url 请求路径
+ * @param params 参数
+ * @returns {Promise<unknown>}
+ */
+export function remove(url, params) {
+    return new Promise((resolve, reject) => {
+        http.delete(url, JSON.stringify(params))
+            .then(res => {
+                resolve(res.data)
+            }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
+/**
+ * 发起put请求
+ * @param url 请求路径
+ * @param params 参数
+ * @returns {Promise<unknown>}
+ */
+export function put(url, params) {
+    return new Promise((resolve, reject) => {
+        http.put(url, JSON.stringify(params))
+            .then(res => {
+                resolve(res.data)
+            }).catch(err => {
             reject(err)
         })
     })

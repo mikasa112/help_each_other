@@ -3,10 +3,20 @@ import Vuex from "vuex"
 
 Vue.use(Vuex)
 
-const state = {}
-const mutations = {}
+const state = {
+    isCollapse: false
+}
+const mutations = {
+    setCollapse(context, val) {
+        context.isCollapse = val
+    }
+}
 const actions = {}
-const getters = {}
+const getters = {
+    getCollapse(context) {
+        return context.isCollapse;
+    }
+}
 
 
 export default new Vuex.Store({

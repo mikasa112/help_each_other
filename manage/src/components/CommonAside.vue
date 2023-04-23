@@ -98,7 +98,7 @@ export default {
             return this.menu.filter(item => item.children)
         },
         isCollapse() {
-            return false;
+            return this.$store.getters.getCollapse;
         }
     }
 }

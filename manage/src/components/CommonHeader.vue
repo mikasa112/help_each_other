@@ -13,15 +13,12 @@
         </el-col>
         <el-col :span="2">
             <!--   头像下拉菜单 -->
-            <el-dropdown trigger="click">
+            <el-dropdown trigger="click" @command="handleCommand">
                 <div class="circle">
                     <el-avatar :size="45" :src="imgUrl"></el-avatar>
                 </div>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item icon="el-icon-plus">我的</el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-circle-plus">账单</el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-circle-plus-outline">消息</el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-check">退出</el-dropdown-item>
+                    <el-dropdown-item icon="el-icon-close" command="logout">退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
         </el-col>
@@ -29,7 +26,7 @@
 </template>
 
 <script>
-import {getCurrentUser} from "@/api/api";
+import {getCurrentUser, logoutApi} from "@/api/api";
 
 export default {
     name: "CommonHeader",
@@ -40,13 +37,20 @@ export default {
     },
     methods: {
         menuHandler() {
-
+            var collapse = this.$store.getters.getCollapse;
+            this.$store.commit("setCollapse", !collapse)
         },
-
+        async handleCommand(command) {
+            if (command === "logout") {
+                await logoutApi();
+                localStorage.removeItem("token")
+                await this.$router.replace({name: "login"})
+            }
+        }
     },
     async mounted() {
         let info = await getCurrentUser()
-        this.imgUrl=info.user.avatar
+        this.imgUrl = info.user.avatar
     }
 }
 </script>
