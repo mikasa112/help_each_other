@@ -14,6 +14,7 @@ import com.help.each.mapper.UserMapper;
 import com.help.each.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,6 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @CacheEvict(value = "user:page", allEntries = true)
     public ApiResponse register(RegisterRequest request) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(User::getUsername, request.getUsername());
@@ -65,6 +67,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setAge(request.getAge());
+        user.setSex(request.getSex());
         user.setPoints(0F);
         return ApiResponse.PrintlnApiResponse(userMapper.insert(user) >= 1, "注册成功", Status.ERROR);
     }

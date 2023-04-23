@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     final UserMapper userMapper;
     final ServiceMapper serviceMapper;
     final OrderMapper orderMapper;
+    final PasswordEncoder passwordEncoder;
 
     @Override
     @Cacheable(value = "user:page",
@@ -89,10 +92,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public ApiResponse getUserInfoByName(String name) {
+        User user = userMapper.selectOne(Wrappers.lambdaQuery(User.class)
+                .eq(User::getUsername, name));
+        return ApiResponse.OfStatus(Status.OK, user);
+    }
+
+    @Override
     //清空缓存
-    @CacheEvict(value = "user:page", allEntries = true)
-    @CachePut(value = "user", key = "#uuid")
+    @Caching(evict = @CacheEvict(value = "user:page", allEntries = true)
+            , put = @CachePut(value = "user", key = "#uuid"))
     public ApiResponse updateUserInfo(String uuid, User user) {
+        //将用户的密码加密
+        if (Objects.nonNull(user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         if (userMapper.update(user,
                 Wrappers.lambdaQuery(User.class).eq(User::getUuid, uuid)) >= 1) {
             return getUserInfoByUuid(uuid);
@@ -101,7 +115,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @CachePut(value = "user", key = "#uuid")
+    @Caching(evict = {@CacheEvict(value = "user:page", allEntries = true)
+            , @CacheEvict(value = "user", key = "#uuid")})
     public ApiResponse removeUserByUuid(String uuid) {
         return ApiResponse.PrintlnApiResponse(userMapper
                 .delete(Wrappers.lambdaQuery(User.class)
