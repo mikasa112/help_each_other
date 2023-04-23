@@ -49,6 +49,14 @@ public class UserController {
     }
 
     /*
+    获取用户以用户名字
+     */
+    @GetMapping("name/{name}")
+    public ApiResponse name(@PathVariable("name") String name) {
+        return service.getUserInfoByName(name);
+    }
+
+    /*
     获取当前登录用户的信息
      */
     @GetMapping("index")

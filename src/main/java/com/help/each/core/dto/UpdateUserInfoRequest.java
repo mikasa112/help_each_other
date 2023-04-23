@@ -1,5 +1,6 @@
 package com.help.each.core.dto;
 
+import com.help.each.core.validator.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,7 +15,6 @@ import org.hibernate.validator.constraints.Length;
  */
 @Data
 public class UpdateUserInfoRequest {
-    @NotEmpty(message = "密码不能为空")
     @Length(min = 8, max = 26, message = "密码的长度在8-26字符之间")
     private String password;
     @Length(max = 21, message = "用户昵称最长为21个字符")
@@ -27,5 +27,5 @@ public class UpdateUserInfoRequest {
     @Pattern(regexp = "^((13[0-9])|(14(0|[5-7]|9))|(15([0-3]|[5-9]))|(16(2|[5-7]))|(17[0-8])|(18[0-9])|(19([0-3]|[5-9])))\\d{8}$", message = "手机号码格式不正确")
     private String phone;
     @Min(value = 0L, message = "年龄不能低于0岁")
-    private int age;
+    private Integer age;
 }

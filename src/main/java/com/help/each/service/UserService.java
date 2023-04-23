@@ -5,7 +5,6 @@ import com.help.each.core.vo.ApiResponse;
 import com.help.each.entity.User;
 
 
-
 /**
  * @author Yuanan
  * @date 2023/3/23
@@ -30,15 +29,24 @@ public interface UserService extends IService<User> {
     ApiResponse getUserInfoByUuid(String uuid);
 
     /**
+     * 获取用户信息从名字
+     *
+     * @param name 名字
+     */
+    ApiResponse getUserInfoByName(String name);
+
+    /**
      * 更新uuid的用户信息
+     *
      * @param uuid uuid
      * @param user {@link User}
      * @return {@link ApiResponse}
      */
-    ApiResponse updateUserInfo(String uuid,User user);
+    ApiResponse updateUserInfo(String uuid, User user);
 
     /**
      * 删除用户byUUID
+     *
      * @param uuid uuid
      * @return bool
      */
