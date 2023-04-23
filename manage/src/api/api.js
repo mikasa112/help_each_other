@@ -1,4 +1,4 @@
-import {get, post, remove, upload} from "@/api/index";
+import {get, post, put, remove, upload} from "@/api/index";
 
 //登录
 export const loginApi = (params) => post("api/auth/login", params)
@@ -10,6 +10,8 @@ export const getCurrentUser = () => get("api/v1/user/index")
 export const getUserList = params => get(`api/v1/user?${params}`)
 //获取用户的信息从名字
 export const getUserByName = params => get(`api/v1/user/name/${params}`)
+//更新用户信息
+export const updateUserInfo = (uuid, params) => put(`api/v1/user/${uuid}`, params)
 //删除用户从uuid
 export const removeUserByUUID = uuid => remove(`api/v1/user/${uuid}`)
 //注册

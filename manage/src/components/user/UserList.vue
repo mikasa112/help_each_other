@@ -72,18 +72,31 @@ export default {
     methods: {
         async getUsers() {
             this.users = await getUserList(this.params)
-            console.log(this.users)
         },
         handleEdit(data) {
-            console.log(data)
+            this.$router.push({name: "updateUser", params: data})
         },
-        async handleRemove(uuid) {
-            await removeUserByUUID(uuid)
-            await this.getUsers()
+        handleRemove(uuid) {
+            this.$confirm("是否删除此用户?", '提示', {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+            }).then(async () => {
+                await removeUserByUUID(uuid)
+                await this.getUsers()
+                this.$message({
+                    type: "success",
+                    message: "删除成功",
+                })
+            }).catch(() => {
+                this.$message({
+                    type: "info",
+                    message: "已取消删除",
+                })
+            });
         },
         //分页切换到当前页时的回调
         handleCurrentChange(currentPage) {
-            // console.log(currentPage);
             this.page = currentPage;
             this.getUsers(this.params);
         },

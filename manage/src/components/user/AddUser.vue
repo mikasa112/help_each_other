@@ -39,7 +39,8 @@
                         >上传头像
                         </el-button
                         >
-                        <img v-show="user.avatar" style="width: 150px;height: 150px" :src="user.avatar" alt=""/>
+                        <el-avatar shape="square" v-show="user.avatar" :size="150" fit="fill"
+                                   :src="user.avatar"></el-avatar>
                         <AvatarCropper
                                 :dialogVisible.sync="dialogVisible"
                                 @closeAvatarDialog="closeAvatarDialog"
@@ -97,7 +98,8 @@ export default {
                 email: "",
                 phone: "",
                 age: 18,
-            }, rules: {
+            },
+            rules: {
                 username: [
                     {required: true, message: "用户名不能为空", trigger: "blur"},
                     {
@@ -174,7 +176,6 @@ export default {
                     if (this.user.sex !== "") {
                         user["sex"] = this.user.sex
                     }
-                    // console.log(user)
                     await registerApi(user)
                     this.$notify({
                         title: "成功",
