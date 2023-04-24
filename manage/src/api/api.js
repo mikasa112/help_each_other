@@ -25,3 +25,9 @@ export const getNewsLetterList = params => get(`api/v1/newsletter?${params}`)
 export const addNewsLetter = params => post("api/v1/newsletter", params)
 //删除一条资讯从id
 export const removeNewsLetterById = id => remove(`api/v1/newsletter/${id}`)
+//获取分类列表
+export const getCategories = () => get("api/v1/category")
+//创建一个分类
+export const addCategory = params => post("api/v1/category", params)
+//删除一个分类
+export const removeCategoryById = id => remove(`api/v1/category/${id}`)

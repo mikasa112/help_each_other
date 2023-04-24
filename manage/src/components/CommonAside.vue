@@ -68,6 +68,13 @@ export default {
                     name: 'category',
                     label: '分类管理',
                     icon: 's-grid',
+                    children: [
+                        {
+                            path: '/category/list',
+                            name: 'categoryList',
+                            label: '服务分类',
+                        },
+                    ]
                 },
                 {
                     path: '/order',
