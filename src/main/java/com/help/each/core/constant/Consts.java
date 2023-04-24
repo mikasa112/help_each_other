@@ -40,6 +40,7 @@ public interface Consts {
     String BEARER = "Bearer ";
 
     String SYS_POINT_REMARK_SUB = "系统扣除";
+    String SYS_POINT_REMARK_RETURN = "系统返回";
     String SYS_POINT_REMARK_ADD = "系统发放";
     String SYS_ORDER_FINISH = "订单完成";
 }

@@ -1,5 +1,7 @@
 package com.help.each.controller.v1;
 
+import com.help.each.core.constant.Consts;
+import com.help.each.core.dto.AddPointsParamRequest;
 import com.help.each.core.dto.PageParamRequest;
 import com.help.each.core.vo.ApiResponse;
 import com.help.each.service.PointsService;
@@ -27,6 +29,15 @@ public class PointsController {
     public ApiResponse index(PageParamRequest request) {
         return pointsService.getPointRecords(request.getPage(),
                 request.getSize(), request.getSort(), request.getOrder());
+    }
+
+    /*
+        管理员添加积分
+     */
+    @Secured("admin")
+    @PostMapping
+    public ApiResponse addPoint(@RequestBody @Validated AddPointsParamRequest request) {
+        return pointsService.addPointRecord(request.getUuid(), null, request.getRecord(), Consts.SYS_POINT_REMARK_ADD);
     }
 
     @Secured("admin")

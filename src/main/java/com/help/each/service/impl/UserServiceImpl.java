@@ -63,9 +63,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Cacheable(value = "user", key = "#uuid")
     public ApiResponse getUserInfoByUuid(String uuid) {
         UserInfo userInfo = new UserInfo();
-        User user = userMapper.selectOne(Wrappers.lambdaQuery(User.class).eq(User::getUuid, uuid).select(
-                User::getUuid, User::getNickname, User::getSex, User::getAvatar, User::getEmail, User::getPhone, User::getAge
-        ));
+        //获取uuid的全部信息 2023/4/24
+        User user = userMapper.selectOne(Wrappers.lambdaQuery(User.class).eq(User::getUuid, uuid));
         userInfo.setUser(user);
         List<Order> orders = this.getOrdersByProvider(uuid);
         List<com.help.each.entity.Service> list = new ArrayList<>();

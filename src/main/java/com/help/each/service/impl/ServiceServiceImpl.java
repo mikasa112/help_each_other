@@ -299,7 +299,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
                 ServiceServiceImpl serviceImpl = applicationContext.getBean(this.getClass());
                 Service service = serviceImpl.getServiceWrap(serviceId);
                 //当服务消费者取消/删除服务成功时，系统先将积分还给用户
-                pointsService.addPointRecord(uuid, null, service.getPointsPrice(), Consts.SYS_POINT_REMARK_ADD);
+                pointsService.addPointRecord(uuid, null, service.getPointsPrice(), Consts.SYS_POINT_REMARK_RETURN);
             }
             return ApiResponse.OfStatus(Status.OK);
         }
