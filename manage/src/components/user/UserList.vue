@@ -40,7 +40,7 @@
                     label="操作"
                     width="100">
                 <template slot-scope="scope">
-                    <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                    <el-button @click="handleEdit(scope.row.uuid)" type="text" size="small">编辑</el-button>
                     <el-button @click="handleRemove(scope.row.uuid)" type="text" size="small">删除</el-button>
                 </template>
             </el-table-column>
@@ -73,8 +73,8 @@ export default {
         async getUsers() {
             this.users = await getUserList(this.params)
         },
-        handleEdit(data) {
-            this.$router.push({name: "updateUser", params: data})
+        handleEdit(uuid) {
+            this.$router.push({name: "updateUser", params: {uuid: uuid}})
         },
         handleRemove(uuid) {
             this.$confirm("是否删除此用户?", '提示', {

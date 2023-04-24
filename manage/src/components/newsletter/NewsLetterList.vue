@@ -20,7 +20,7 @@
                     width="150px"
                     label="创建时间"
             ></el-table-column>
-            <el-table-column width="60px">
+            <el-table-column width="60px" fixed="right">
                 <template v-slot="scope">
                     <el-button type="text" @click="remove(scope.row.id)">删除</el-button>
                 </template>

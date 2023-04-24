@@ -1,11 +1,11 @@
 <template>
-    <el-card class="box-card">
+    <el-card class="box-card" style="height: 640px">
         <el-form ref="form" :model="user" label-width="auto" label-position="left" :rules="rules">
             <el-col :span="8">
-                <el-form-item label="UUID" prop="username">
+                <el-form-item label="UUID">
                     <el-input v-model="user.uuid" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="用户名" prop="username">
+                <el-form-item label="用户名">
                     <el-input v-model="user.username" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="原密码" prop="password">
@@ -32,6 +32,17 @@
                 </el-form-item>
                 <el-form-item label="用户邮箱" prop="email">
                     <el-input v-model="user.email"></el-input>
+                </el-form-item>
+                <el-form-item label="拥有积分">
+                    <el-input v-model="user.points" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="服务评价">
+                    <el-rate v-model="user.evaluate"
+                             disabled-void-icon-class="iconfont icon-sad"
+                             :icon-classes="iconClasses"
+                             void-icon-class="icon-rate-face-off"
+                             style="margin-top: 12px;margin-right: 150px"
+                             :colors="['#99A9BF', '#F7BA2A', '#FF9900']" disabled></el-rate>
                 </el-form-item>
             </el-col>
             <el-col :span="8" style="margin-left: 100px">
@@ -68,13 +79,15 @@
 
 <script>
 import AvatarCropper from "@/components/util/AvatarCropper.vue";
-import {updateUserInfo, uploadApi} from "@/api/api";
+import {getUserByUUID, updateUserInfo, uploadApi} from "@/api/api";
+import "@/assets/icon/iconfont.css"
 
 export default {
     name: "UpdateUser",
     components: {AvatarCropper},
     data() {
         return {
+            iconClasses: ['iconfont icon-normal', 'iconfont icon-smile', 'iconfont icon-happy'],
             dialogVisible: false,
             user: {},
             copyInfo: {},
@@ -95,6 +108,10 @@ export default {
     },
     methods: {
         async update(user, info) {
+            if (!user.password || user.password === "" || user.password.length < 8) {
+                this.$message.warning("密码长度不能小于八位")
+                return
+            }
             let changeInfo = {}
             if (user.password !== info.password)
                 changeInfo["password"] = user.password
@@ -117,9 +134,11 @@ export default {
                 type: "success",
             });
         },
-        getData() {
-            if (this.$route.params) {
-                this.user = this.$route.params
+        async getData() {
+            if (this.$route.params.uuid) {
+                let msg = await getUserByUUID(this.$route.params.uuid)
+                this.user = msg.user;
+                this.user["evaluate"] = msg.evaluate;
                 //将原本的数据复制一下
                 this.copyInfo = {
                     password: this.user.password,

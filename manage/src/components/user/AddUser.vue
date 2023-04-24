@@ -1,5 +1,5 @@
 <template>
-    <el-card class="box-card">
+    <el-card class="box-card" style="height: 640px">
         <el-form ref="form" :model="user" label-width="auto" label-position="left" :rules="rules">
             <el-col :span="8">
                 <el-form-item label="用户名" prop="username">
