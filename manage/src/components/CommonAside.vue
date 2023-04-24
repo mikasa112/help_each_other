@@ -80,6 +80,18 @@ export default {
                     name: 'newsletter',
                     label: '资讯管理',
                     icon: 'news',
+                    children: [
+                        {
+                            path: '/newsletter/list',
+                            name: 'newsLetterList',
+                            label: '资讯列表',
+                        },
+                        {
+                            path: '/newsletter/add',
+                            name: 'addNewsLetter',
+                            label: '添加资讯',
+                        }
+                    ]
                 },
                 {
                     path: '/comment',

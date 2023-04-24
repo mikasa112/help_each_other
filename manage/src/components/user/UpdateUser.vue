@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import AvatarCropper from "@/components/AvatarCropper.vue";
+import AvatarCropper from "@/components/util/AvatarCropper.vue";
 import {updateUserInfo, uploadApi} from "@/api/api";
 
 export default {
