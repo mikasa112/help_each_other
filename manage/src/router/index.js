@@ -9,6 +9,7 @@ import UpdateUser from "@/components/user/UpdateUser.vue";
 import NewsLetterList from "@/components/newsletter/NewsLetterList.vue";
 import AddNewsLetter from "@/components/newsletter/AddNewsLetter.vue";
 import CategoryList from "@/components/category/CategoryList.vue";
+import OrderList from "@/components/order/OrderList.vue";
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,8 @@ const routes = [
             {name: "addNewsLetter", path: "/newsletter/add", component: AddNewsLetter},
 
             {name: "categoryList", path: "/category/list", component: CategoryList},
+
+            {name: "orderList", path: "/order/list", component: OrderList},
         ],
     },
     {name: "notfound", path: "/notfound", component: () => import('@/views/404.vue')},

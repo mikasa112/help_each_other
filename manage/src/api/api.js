@@ -15,7 +15,7 @@ export const getUserList = params => get(`api/v1/user?${params}`)
 //获取用户的信息从名字
 export const getUserByName = params => get(`api/v1/user/name/${params}`)
 //获取用户的信息从UUID
-export const getUserByUUID= uuid => get(`api/v1/user/${uuid}`)
+export const getUserByUUID = uuid => get(`api/v1/user/${uuid}`)
 //更新用户信息
 export const updateUserInfo = (uuid, params) => put(`api/v1/user/${uuid}`, params)
 //删除用户从uuid
@@ -33,3 +33,5 @@ export const getCategories = () => get("api/v1/category")
 export const addCategory = params => post("api/v1/category", params)
 //删除一个分类
 export const removeCategoryById = id => remove(`api/v1/category/${id}`)
+//获得订单列表
+export const getOrders = () => get("api/v1/order")

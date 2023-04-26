@@ -6,7 +6,7 @@
             </div>
         </el-col>
         <el-col :span="1">
-            <div class="table">首页</div>
+            <div class="table">{{ this.username }}</div>
         </el-col>
         <el-col :span="20">
             <div class="table">&nbsp;</div>
@@ -33,6 +33,7 @@ export default {
     data() {
         return {
             imgUrl: "",
+            username: "",
         }
     },
     methods: {
@@ -51,6 +52,7 @@ export default {
     async mounted() {
         let info = await getCurrentUser()
         this.imgUrl = info.user.avatar
+        this.username = info.user.username
     }
 }
 </script>
@@ -59,6 +61,7 @@ export default {
 .table {
     color: #C0C4CC;
     line-height: 60px;
+    margin-left: 15px;
 }
 
 .circle {

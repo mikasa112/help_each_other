@@ -1,12 +1,14 @@
 <template>
     <el-card class="box-card">
-        <el-table :data="newsletter.list" border style="width: 100%"
+        <el-table :data="newsletter.list" border class="table"
                   highlight-current-row
+                  :cell-style="{ textAlign: 'center' }"
+                  :header-cell-style="{ textAlign: 'center' }"
                   height="540">
             <el-table-column
                     sortable
                     prop="id"
-                    width="50px"
+                    width="60px"
                     label="id"
             ></el-table-column>
             <el-table-column
@@ -91,5 +93,7 @@ export default {
 </script>
 
 <style scoped>
-
+.table {
+    width: 100%;
+}
 </style>

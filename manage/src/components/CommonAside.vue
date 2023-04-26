@@ -81,6 +81,13 @@ export default {
                     name: 'order',
                     label: '订单管理',
                     icon: 's-order',
+                    children: [
+                        {
+                            path: '/order/list',
+                            name: 'orderList',
+                            label: '订单列表',
+                        },
+                    ]
                 },
                 {
                     path: '/newsletter',
