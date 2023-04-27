@@ -62,6 +62,13 @@ export default {
                     name: 'service',
                     label: '服务管理',
                     icon: 'shopping-cart-2',
+                    children: [
+                        {
+                            path: '/service/list',
+                            name: 'serviceList',
+                            label: '服务列表',
+                        },
+                    ]
                 },
                 {
                     path: '/category',

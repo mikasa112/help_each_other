@@ -34,4 +34,6 @@ export const addCategory = params => post("api/v1/category", params)
 //删除一个分类
 export const removeCategoryById = id => remove(`api/v1/category/${id}`)
 //获得订单列表
-export const getOrders = () => get("api/v1/order")
+export const getOrders = params => get(`api/v1/order?${params}`)
+//获得服务列表
+export const getServiceList = params => get(`api/v1/service?${params}`)

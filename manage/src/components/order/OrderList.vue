@@ -1,6 +1,6 @@
 <template>
     <el-card class="box-card">
-        <el-table :data="orders" border class="table"
+        <el-table :data="orders.list" border class="table"
                   highlight-current-row
                   :cell-style="{ textAlign: 'center' }"
                   :header-cell-style="{ textAlign: 'center' }"
@@ -56,20 +56,31 @@
                     prop="startAt"
                     show-overflow-tooltip
                     label="订单开始时间"
+                    sortable
             ></el-table-column>
             <el-table-column
                     prop="endAt"
                     show-overflow-tooltip
                     label="订单结束时间"
+                    sortable
             ></el-table-column>
             <el-table-column
                     label="评价"
+                    sortable
             >
                 <template v-slot="scope">
                     <el-rate :colors="colors" v-model="scope.row.evaluate" disabled></el-rate>
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+                style="margin-top: 25px"
+                :total="orders.total"
+                @current-change="handleCurrentChange"
+                :page-size="orders.pageSize"
+                layout="total, prev, pager, next, jumper"
+        >
+        </el-pagination>
     </el-card>
 </template>
 
@@ -83,11 +94,27 @@ export default {
             status: ["等待顾客同意", "正在进行", "已完成", "异常", "取消"],
             statusColor: ["success", "warning", "danger"],
             pay: ["未支付", "已支付"],
+            page: 1,
+            pageSize: 10,
             orders: [],
             colors: ['#99A9BF', '#F7BA2A', '#FF9900']
         }
     },
     methods: {
+        async getData(params) {
+            let data = await getOrders(params)
+            this.orders = data
+            this.orders.list = data.list.filter(order => {
+                order.status = this.status[order.status]
+                order.pay = this.pay[order.pay]
+                return order
+            })
+        },
+        //分页切换到当前页时的回调
+        handleCurrentChange(currentPage) {
+            this.page = currentPage;
+            this.getData(this.params);
+        },
         routeToUser(uuid) {
             this.$router.push({name: "updateUser", params: {uuid: uuid}})
         },
@@ -101,15 +128,14 @@ export default {
             }
         }
     },
-    async mounted() {
-        let data = await getOrders()
-        this.orders = data.list.filter(order => {
-            order.status = this.status[order.status]
-            order.pay = this.pay[order.pay]
-            return order
-        })
-        console.log(this.orders)
+    mounted() {
+        this.getData(this.params)
     },
+    computed: {
+        params() {
+            return `page=${this.page}&pageSize=${this.pageSize}`;
+        }
+    }
 }
 </script>
 
