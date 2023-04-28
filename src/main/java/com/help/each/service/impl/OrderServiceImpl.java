@@ -52,7 +52,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private static final String ORDER_KEY = "orders:";
 
     @Override
-    @CacheEvict(value = "orders:page", allEntries = true)
     public ApiResponse takeOrder(String uuid, Long serviceId) {
         com.help.each.entity.Service customer = serviceMapper.selectOne(Wrappers.lambdaQuery(com.help.each.entity.Service.class)
                 .eq(com.help.each.entity.Service::getServiceId, serviceId)
@@ -114,14 +113,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    @Cacheable(value = "orders:page", key = "#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
     public ApiResponse getAllOrders(Long currentPage, Long pageSize, String sortBy, String order) {
         List<Order> orders = PageResult.GetDefaultPageList(orderMapper, new QueryWrapper<>(), currentPage, pageSize, sortBy, order);
         return ApiResponse.OfStatus(Status.OK, PageResult.Of(orders, count(), currentPage, pageSize));
     }
 
     @Override
-    @Cacheable(value = "orders:page", key = "#uuid+'-'+#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
     public ApiResponse getOrdersByUUID(String uuid, Long currentPage, Long pageSize, String sortBy, String order) {
         LambdaQueryWrapper<Order> wrapper = Wrappers.lambdaQuery(Order.class)
                 .eq(Order::getCustomerUuid, uuid);
@@ -130,7 +127,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    @CacheEvict(value = "orders:page", allEntries = true)
     public ApiResponse removeOrder(String uuid, Long orderId) {
         int delete = orderMapper.delete(Wrappers.lambdaQuery(Order.class).eq(Order::getOrderId, orderId));
         if (delete >= 1) {
@@ -141,7 +137,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    @CacheEvict(value = "orders:page", allEntries = true)
     public ApiResponse payOrder(String uuid, Long orderId, Integer evaluate) {
         Order order = new Order();
         order.setPay(1);

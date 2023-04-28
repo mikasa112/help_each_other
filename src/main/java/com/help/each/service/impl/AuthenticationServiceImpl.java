@@ -49,7 +49,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    @CacheEvict(value = "user:page", allEntries = true)
     public ApiResponse register(RegisterRequest request) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(User::getUsername, request.getUsername());

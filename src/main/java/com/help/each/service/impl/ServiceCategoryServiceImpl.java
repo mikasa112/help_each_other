@@ -30,14 +30,12 @@ public class ServiceCategoryServiceImpl extends ServiceImpl<ServiceCategoryMappe
     final ServiceCategoryMapper mapper;
 
     @Override
-    @Cacheable(value = "categories")
     public ApiResponse getServiceCategory() {
         List<ServiceCategory> serviceCategories = mapper.selectList(new QueryWrapper<>());
         return ApiResponse.OfStatus(Status.OK, serviceCategories);
     }
 
     @Override
-    @CacheEvict(value = "categories",allEntries = true)
     public ApiResponse addServiceCategory(String category, String describe, String notes) {
         ServiceCategory one = mapper.selectOne(Wrappers.lambdaQuery(ServiceCategory.class).eq(ServiceCategory::getCategory, category));
         if (Objects.isNull(one)) {
@@ -53,7 +51,6 @@ public class ServiceCategoryServiceImpl extends ServiceImpl<ServiceCategoryMappe
     }
 
     @Override
-    @CacheEvict(value = "categories", allEntries = true)
     public ApiResponse updateServiceCategory(Integer id, String category, String describe, String notes) {
         ServiceCategory one = mapper.selectById(id);
         if (Objects.nonNull(one) && !one.getCategory().equals(category)) {
@@ -69,7 +66,6 @@ public class ServiceCategoryServiceImpl extends ServiceImpl<ServiceCategoryMappe
     }
 
     @Override
-    @CacheEvict(value = "categories",allEntries = true)
     public ApiResponse removeServiceCategory(Integer id) {
         if (mapper.deleteById(id) >= 1) {
             return ApiResponse.OfStatus(Status.OK);

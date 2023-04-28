@@ -33,7 +33,6 @@ public class PointsServiceImpl extends ServiceImpl<PointsMapper, Points> impleme
     final UserService userService;
 
     @Override
-    @CacheEvict(value = "points:page", allEntries = true)
     public ApiResponse addPointRecord(String uuid, Long orderId, Float record, String remark) {
         Points points = new Points();
         points.setOrderId(orderId);
@@ -52,7 +51,6 @@ public class PointsServiceImpl extends ServiceImpl<PointsMapper, Points> impleme
     }
 
     @Override
-    @CacheEvict(value = "points:page", allEntries = true)
     public ApiResponse removePointRecord(Integer id) {
         if (pointsMapper.deleteById(id) >= 1) {
             return ApiResponse.OfStatus(Status.OK);
@@ -61,7 +59,6 @@ public class PointsServiceImpl extends ServiceImpl<PointsMapper, Points> impleme
     }
 
     @Override
-    @Cacheable(value = "points:page", key = "#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
     public ApiResponse getPointRecords(Long currentPage, Long pageSize, String sortBy, String order) {
         List<Points> points = PageResult.GetDefaultPageList(pointsMapper, new QueryWrapper<>(), currentPage, pageSize, sortBy, order);
         PageResult<Points> result = PageResult.Of(points, count(), currentPage, pageSize);
