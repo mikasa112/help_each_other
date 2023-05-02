@@ -45,14 +45,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     final PasswordEncoder passwordEncoder;
 
     @Override
-    @Cacheable(value = "user:page",
-            key = "T(String).valueOf(#currentPage)" +
-                    ".concat('-')" +
-                    ".concat(#pageSize)" +
-                    ".concat('-')" +
-                    ".concat(#sortBy)" +
-                    ".concat('-')" +
-                    ".concat(#order)")
     public ApiResponse list(Long currentPage, Long pageSize, String sortBy, String order) {
         List<User> users = PageResult.GetDefaultPageList(userMapper, new QueryWrapper<>(), currentPage, pageSize, sortBy, order);
         PageResult<User> pageResult = PageResult.Of(users, count(), currentPage, pageSize);
@@ -99,8 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     //清空缓存
-    @Caching(evict = @CacheEvict(value = "user:page", allEntries = true)
-            , put = @CachePut(value = "user", key = "#uuid"))
+    @Caching(put = @CachePut(value = "user", key = "#uuid"))
     public ApiResponse updateUserInfo(String uuid, User user) {
         //将用户的密码加密
         if (Objects.nonNull(user.getPassword())) {
@@ -114,8 +105,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    @Caching(evict = {@CacheEvict(value = "user:page", allEntries = true)
-            , @CacheEvict(value = "user", key = "#uuid")})
+    @Caching(evict = @CacheEvict(value = "user", key = "#uuid"))
     public ApiResponse removeUserByUuid(String uuid) {
         return ApiResponse.PrintlnApiResponse(userMapper
                 .delete(Wrappers.lambdaQuery(User.class)

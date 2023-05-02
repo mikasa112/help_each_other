@@ -11,8 +11,6 @@ import com.help.each.mapper.NewsletterMapper;
 import com.help.each.service.NewsletterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +27,6 @@ public class NewsletterServiceImpl extends ServiceImpl<NewsletterMapper, Newslet
     final NewsletterMapper mapper;
 
 
-    @Cacheable(value = "newsletters", key = "#currentPage+'-'+#pageSize+'-'+#sortBy+'-'+#order")
     @Override
     public ApiResponse getNewsletter(Long currentPage, Long pageSize, String sortBy, String order) {
         List<Newsletter> newsletters = PageResult.GetDefaultPageList(mapper, new QueryWrapper<>(), currentPage, pageSize, sortBy, order);
@@ -37,7 +34,6 @@ public class NewsletterServiceImpl extends ServiceImpl<NewsletterMapper, Newslet
         return ApiResponse.OfStatus(Status.OK, result);
     }
 
-    @CacheEvict(value = "newsletters", allEntries = true)
     @Override
     public ApiResponse putNewsletter(String content) {
         Newsletter newsletter = new Newsletter(content);
@@ -48,7 +44,6 @@ public class NewsletterServiceImpl extends ServiceImpl<NewsletterMapper, Newslet
     }
 
     @Override
-    @CacheEvict(value = "newsletters", allEntries = true)
     public ApiResponse updateNewsletter(Integer id, String content) {
         Newsletter newsletter = new Newsletter(content);
         if (mapper.update(newsletter, Wrappers.lambdaUpdate(Newsletter.class)
@@ -59,7 +54,6 @@ public class NewsletterServiceImpl extends ServiceImpl<NewsletterMapper, Newslet
     }
 
     @Override
-    @CacheEvict(value = "newsletters", allEntries = true)
     public ApiResponse removeNewsletter(Integer id) {
         if (mapper.delete(Wrappers.lambdaQuery(Newsletter.class).eq(Newsletter::getId, id)) >= 1) {
             return ApiResponse.OfStatus(Status.OK);
