@@ -23,15 +23,15 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `help_comment`;
 CREATE TABLE `help_comment`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '评论者的uuid',
+  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '评论者的uuid',
   `service_id` bigint NOT NULL COMMENT '服务的id',
-  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '评论的内容',
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '评论的内容',
   `like_count` int NULL DEFAULT NULL COMMENT '点赞数量',
   `created_at` datetime NULL DEFAULT NULL COMMENT '创建于',
   `updated_at` datetime NULL DEFAULT NULL COMMENT '更新于',
   `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除于',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of help_comment
@@ -44,12 +44,12 @@ INSERT INTO `help_comment` VALUES (1, '3791862e-fd29-46f2-9690-93c49e8caeaf', 16
 DROP TABLE IF EXISTS `help_newsletter`;
 CREATE TABLE `help_newsletter`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '养老资讯主体内容',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '养老资讯主体内容',
   `created_at` datetime NULL DEFAULT NULL COMMENT '创建时间于',
   `updated_at` datetime NULL DEFAULT NULL COMMENT '更新时间于',
   `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间于',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 958 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 958 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of help_newsletter
@@ -1019,15 +1019,15 @@ INSERT INTO `help_newsletter` VALUES (958, '测试测试测试', '2023-04-17 22:
 DROP TABLE IF EXISTS `help_points`;
 CREATE TABLE `help_points`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户uuid',
+  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户uuid',
   `order_id` bigint NULL DEFAULT NULL COMMENT '积分改变的订单',
   `record` float NOT NULL COMMENT '积分的记录',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `created_at` datetime NULL DEFAULT NULL COMMENT '创建于',
   `updated_at` datetime NULL DEFAULT NULL COMMENT '更新于',
   `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除于',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of help_points
@@ -1043,20 +1043,20 @@ DROP TABLE IF EXISTS `help_service`;
 CREATE TABLE `help_service`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `service_id` bigint NOT NULL COMMENT '服务唯一ID',
-  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '服务创建者UUID',
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '服务的名称',
-  `introduction` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '服务的介绍',
-  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '服务的关键字',
+  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '服务创建者UUID',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '服务的名称',
+  `introduction` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '服务的介绍',
+  `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '服务的关键字',
   `points_price` float NULL DEFAULT NULL COMMENT '服务的价格(积分)',
   `category` int NOT NULL COMMENT '服务的分类ID',
-  `pictures` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '服务的相关照片(以分号分割)',
-  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '所需服务的地址',
+  `pictures` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '服务的相关照片(以分号分割)',
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '所需服务的地址',
   `status` int NOT NULL COMMENT '服务的状态(0:未接单,1:已接单,2:已完成)',
   `created_at` datetime NULL DEFAULT NULL COMMENT '创建时间于',
   `updated_at` datetime NULL DEFAULT NULL COMMENT '更新时间于',
   `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间于',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of help_service
@@ -1070,14 +1070,14 @@ INSERT INTO `help_service` VALUES (23, 1648248847212957696, '3791862e-fd29-46f2-
 DROP TABLE IF EXISTS `help_service_category`;
 CREATE TABLE `help_service_category`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `category` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '服务分类名称',
-  `describes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '服务分类描述',
-  `notes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
+  `category` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '服务分类名称',
+  `describes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '服务分类描述',
+  `notes` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `created_at` datetime NULL DEFAULT NULL COMMENT '创建于',
   `updated_at` datetime NULL DEFAULT NULL COMMENT '更新于',
   `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除于',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of help_service_category
@@ -1094,8 +1094,8 @@ CREATE TABLE `help_service_order`  (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `order_id` bigint NOT NULL COMMENT '订单雪花ID',
   `service_id` bigint NOT NULL COMMENT '服务的ID',
-  `provider_uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '接单人的UUID',
-  `customer_uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '顾客的UUID',
+  `provider_uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '接单人的UUID',
+  `customer_uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '顾客的UUID',
   `created_at` datetime NULL DEFAULT NULL COMMENT '创建于',
   `updated_at` datetime NULL DEFAULT NULL COMMENT '更新于',
   `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除于',
@@ -1105,7 +1105,7 @@ CREATE TABLE `help_service_order`  (
   `pay` int NULL DEFAULT NULL COMMENT '订单支付状态(0未支付，1已支付)',
   `evaluate` int UNSIGNED NULL DEFAULT NULL COMMENT '接单人完成服务的评价(0-5)分',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of help_service_order
@@ -1118,22 +1118,22 @@ INSERT INTO `help_service_order` VALUES (5, 1648249137572040704, 164824884721295
 DROP TABLE IF EXISTS `help_user`;
 CREATE TABLE `help_user`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'uuid',
-  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名',
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码',
-  `role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户的权限',
-  `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '用户的昵称',
-  `sex` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '用户的性别',
-  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '用户的头像',
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '用户的邮箱号码',
-  `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '用户的手机号码',
+  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'uuid',
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户名',
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
+  `role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户的权限',
+  `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户的昵称',
+  `sex` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户的性别',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户的头像',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户的邮箱号码',
+  `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户的手机号码',
   `age` int NULL DEFAULT NULL COMMENT '用户的年龄',
   `points` float NULL DEFAULT NULL COMMENT '用户的所有积分',
   `created_at` datetime NULL DEFAULT NULL COMMENT '创建时间于',
   `updated_at` datetime NULL DEFAULT NULL COMMENT '更新时间于',
   `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间于',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of help_user

@@ -3,14 +3,11 @@ package core
 import (
 	"bufio"
 	"encoding/json"
-	"log"
-	"runtime"
 	"server/internal"
 	"server/internal/protocol"
 	"server/pkg/conf"
 	"server/pkg/logger"
 	"sync"
-	"time"
 )
 
 var WG sync.WaitGroup
@@ -21,10 +18,10 @@ func New() {
 	WG.Add(1)
 	server := &NetServer{addr: conf.ServerConf.Addr}
 	go server.Start()
+	//启动websocket将服务信息发给前端
+	go WebServerStart()
 	go RedisChannel()
 	logger.Infoln("服务已启动...")
-	//检查服务器状态
-	//go checkServer()
 	distribute()
 	WG.Wait()
 }
@@ -66,14 +63,4 @@ func decode(data []byte) internal.Order {
 		logger.Errorf("解码失败, 错误为: %v", err)
 	}
 	return order
-}
-
-func checkServer() {
-	ticker := time.NewTicker(10 * time.Second)
-	for range ticker.C {
-		container := GetContainer()
-		log.Printf("容器里有: %v", container.Users)
-		goroutine := runtime.NumGoroutine()
-		log.Printf("当前服务器并发Goroutines为: %v", goroutine)
-	}
 }

@@ -22,14 +22,20 @@ func NewConfig(path string) *Config {
 func (c *Config) ReadConfig() {
 	err := viper.UnmarshalKey("server", &ServerConf)
 	err = viper.UnmarshalKey("redis", &RedisConf)
+	err = viper.UnmarshalKey("web", &WebConf)
 	if err != nil {
 		log.Panicf("日志读取失败，错误为: %v\n", err)
 	}
 }
 
+// ServerConf 服务的配置
 var ServerConf *ServerConfig
 
+// RedisConf redis的配置
 var RedisConf *RedisConfig
+
+// WebConf websocket的配置
+var WebConf *WebConfig
 
 type ServerConfig struct {
 	Addr    string
@@ -41,4 +47,10 @@ type RedisConfig struct {
 	Addr     string
 	Password string
 	Db       int
+}
+
+type WebConfig struct {
+	Addr      string
+	Pattern   string
+	CycleTime int
 }

@@ -6,3 +6,8 @@ redis:
   addr: "localhost:6379"
   password:
   db: 0
+web:
+  addr: 127.0.0.1:8082
+  pattern: /
+  #周期单位 s
+  cycle: 10
