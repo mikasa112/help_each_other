@@ -13,7 +13,10 @@ import (
 	"time"
 )
 
-var upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	}}
 
 // WebServerStart 开启Web服务
 func WebServerStart() {
@@ -31,20 +34,19 @@ func webserver(w http.ResponseWriter, r *http.Request) {
 			conf.WebConf.Pattern, err)
 	}
 	defer c.Close()
-	for {
-		Send(c)
-	}
+	Send(c)
 }
 
 // Send 周期性发送数据
 func Send(conn *websocket.Conn) {
-	t := time.NewTimer(time.Duration(conf.WebConf.CycleTime) * time.Second)
+	t := time.NewTicker(10 * time.Second)
+	defer t.Stop()
 	for range t.C {
 		serverInfo := ServerInfo()
 		err := conn.WriteJSON(&serverInfo)
 		if err != nil {
-			logger.Errorf("获取服务器信息失败，错误为：%v", err)
-			continue
+			logger.Infof("WebSocket Closed，错误为：%v", err)
+			break
 		}
 	}
 }
