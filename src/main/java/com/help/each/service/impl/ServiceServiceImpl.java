@@ -80,8 +80,8 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
             return ApiResponse.OfStatus(Status.SERVICE_CREATE_FAILED);
         }
         //如果是常规用户才操作积分
-        User user = (User) userService.getUserInfoByUuid(service.getUuid()).getData();
-        if (Role.USER.equals(user.getRole())) {
+        UserInfo userInfo = (UserInfo) userService.getUserInfoByUuid(service.getUuid()).getData();
+        if (Role.USER.equals(userInfo.getUser().getRole())) {
             //当服务消费者创建服务成功时，系统先将积分扣除
             pointsService.addPointRecord(service.getUuid(), null, Util.NegativeNum(service.getPointsPrice()), Consts.SYS_POINT_REMARK_SUB);
         }
