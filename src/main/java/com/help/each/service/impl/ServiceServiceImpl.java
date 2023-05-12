@@ -16,6 +16,7 @@ import com.help.each.core.util.RedisUtil;
 import com.help.each.core.util.Util;
 import com.help.each.core.vo.ApiResponse;
 import com.help.each.core.vo.PageResult;
+import com.help.each.core.vo.UserInfo;
 import com.help.each.entity.Service;
 import com.help.each.entity.User;
 import com.help.each.mapper.ServiceMapper;
@@ -96,11 +97,12 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
      */
     @Override
     public Service createService(String uuid, AddServiceRequest r) {
-        User user = (User) userService.getUserInfoByUuid(uuid).getData();
+        //fix 2023/5/12 更新获取用户信息后没有修改对应的类型转换，转为UserInfo
+        UserInfo userInfo = (UserInfo) userService.getUserInfoByUuid(uuid).getData();
         //如果用户的积分不够，则创建失败
         if (Objects.isNull(r.getPointsPrice())
-                || Objects.isNull(user.getPoints())
-                || r.getPointsPrice() > user.getPoints()) {
+                || Objects.isNull(userInfo.getUser().getPoints())
+                || r.getPointsPrice() > userInfo.getUser().getPoints()) {
             throw new BaseException(Status.USER_POINTS_NOT_ENOUGH);
         }
         long id = IdUtil.getSnowflakeNextId();

@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"runtime"
 	"server/pkg/conf"
-	"server/pkg/logger"
 	"time"
 )
 
@@ -39,13 +38,15 @@ func webserver(w http.ResponseWriter, r *http.Request) {
 
 // Send 周期性发送数据
 func Send(conn *websocket.Conn) {
+	serverInfo := ServerInfo()
+	_ = conn.WriteJSON(&serverInfo)
 	t := time.NewTicker(10 * time.Second)
 	defer t.Stop()
 	for range t.C {
 		serverInfo := ServerInfo()
 		err := conn.WriteJSON(&serverInfo)
 		if err != nil {
-			logger.Infof("WebSocket Closed，错误为：%v", err)
+			log.Printf("WebSocket Closed，错误为：%v", err)
 			break
 		}
 	}

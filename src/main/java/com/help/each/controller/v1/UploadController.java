@@ -41,7 +41,7 @@ public class UploadController {
         String rawFileName = StrUtil.subBefore(filename, ".", true);
         String fileType = StrUtil.subAfter(filename, ".", true);
         //返回文件的名字加上时间戳
-        String savedFileName = rawFileName + "." + fileType;
+        String savedFileName = rawFileName +"-"+System.nanoTime()+ "." + fileType;
         String localFilePath = StrUtil.appendIfMissing(fileTempPath, "/") + savedFileName;
         try {
             file.transferTo(new File(localFilePath));
