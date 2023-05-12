@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.core.constant.Status;
 import com.help.each.core.vo.ApiResponse;
 import com.help.each.core.vo.PageResult;
+import com.help.each.core.vo.UserInfo;
 import com.help.each.entity.Points;
 import com.help.each.entity.User;
 import com.help.each.mapper.PointsMapper;
@@ -37,10 +38,11 @@ public class PointsServiceImpl extends ServiceImpl<PointsMapper, Points> impleme
         points.setUuid(uuid);
         points.setRemark(remark);
         points.setRecord(record);
-        User user = (User) userService.getUserInfoByUuid(uuid).getData();
+        //fix 2023/5/12 cast err
+        UserInfo user = (UserInfo) userService.getUserInfoByUuid(uuid).getData();
         //积分改变+-
-        user.setPoints(user.getPoints() + record);
-        if (Objects.equals(userService.updateUserInfo(uuid, user).getCode(), Status.OK.getCode())) {
+        user.getUser().setPoints(user.getUser().getPoints() + record);
+        if (Objects.equals(userService.updateUserInfo(uuid, user.getUser()).getCode(), Status.OK.getCode())) {
             if (pointsMapper.insert(points) >= 1) {
                 return ApiResponse.OfStatus(Status.OK);
             }
