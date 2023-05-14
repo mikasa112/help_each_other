@@ -80,9 +80,11 @@ public interface ServiceService extends IService<Service> {
      * @param name        服务likename
      * @param currentPage 当前页
      * @param pageSize    每页多大
+     * @param sortBy      以什么排序
+     * @param order       排序顺序默认asc
      * @return {@link ApiResponse}
      */
-    ApiResponse getServicesName(String name, Long currentPage, Long pageSize);
+    ApiResponse getServicesName(String name, Long currentPage, Long pageSize, String sortBy, String order);
 
 
     /**

@@ -153,11 +153,13 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
      包装一下以便获得visited
      */
     public PageResult<Service> getSercicesWrap(Integer category, Long currentPage, Long pageSize, String sortBy, String order) {
-        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus)
+        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class)
                 .eq(Service::getCategory, category);
-        List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper,
+        Long count = mapper.selectCount(wrapper);
+        List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getPictures, Service::getAddress),
                 currentPage, pageSize, sortBy, order);
-        return PageResult.Of(services, count(), currentPage, pageSize);
+        //fix 修改这个获取到全部长度的bug
+        return PageResult.Of(services, count, currentPage, pageSize);
     }
 
 
@@ -165,7 +167,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     包装一下以便获得visited
      */
     public PageResult<Service> getServicesWrap(Long currentPage, Long pageSize, String sortBy, String order) {
-        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory);
+        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory, Service::getPictures);
         List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper,
                 currentPage, pageSize, sortBy, order);
         return PageResult.Of(services, count(), currentPage, pageSize);
@@ -238,11 +240,13 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
      * @param name        服务likename
      * @param currentPage 当前页
      * @param pageSize    每页多大
+     * @param sortBy      以什么排序
+     * @param order       排序顺序默认asc
      */
     @Override
-    public ApiResponse getServicesName(String name, Long currentPage, Long pageSize) {
+    public ApiResponse getServicesName(String name, Long currentPage, Long pageSize, String sortBy, String order) {
         ServiceServiceImpl ss = applicationContext.getBean(this.getClass());
-        PageResult<Service> result = ss.getServicesNameWrap(name, currentPage, pageSize);
+        PageResult<Service> result = ss.getServicesNameWrap(name, currentPage, pageSize, sortBy, order);
         List<Service> list = result.getList().stream().map(s -> s.setVisited(getVisited(s.getServiceId()))).toList();
         result.setList(list);
         return ApiResponse.OfStatus(Status.OK, result);
@@ -251,18 +255,19 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     /*
     包装
      */
-    public PageResult<Service> getServicesNameWrap(String name, Long currentPage, Long pageSize) {
-        Page<Service> page = new Page<>();
-        page.setCurrent(currentPage);
-        page.setSize(pageSize);
+    public PageResult<Service> getServicesNameWrap(String name, Long currentPage, Long pageSize, String sortBy, String order) {
+//        Page<Service> page = new Page<>();
+//        page.setCurrent(currentPage);
+//        page.setSize(pageSize);
         //这是查询count的
         LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class)
                 .like(Service::getName, name);
         Long count = mapper.selectCount(wrapper);
-        //选择查询的字段
-        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory);
-        mapper.selectPage(page, wrapper);
-        List<Service> services = page.getRecords();
+        //选择查询的字段 fix:2023/5/13 添加查询字段图片
+        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory, Service::getPictures);
+        //fix 2023/5/13添加规则查询
+        List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper, currentPage, pageSize, sortBy, order);
+//        mapper.selectPage(page, wrapper);
         return PageResult.Of(services, count, currentPage, pageSize);
     }
 

@@ -47,8 +47,9 @@ public class ServiceController {
     }
 
     @GetMapping("/name/{name}")
-    public ApiResponse index(@PathVariable("name") String name, PageParamDefaultRequest request) {
-        return service.getServicesName(name, request.getPage(), request.getSize());
+    //fix 2023/5/13 添加查询顺序和以什么排序
+    public ApiResponse indexName(@PathVariable("name") String name, PageParamRequest request) {
+        return service.getServicesName(name, request.getPage(), request.getSize(),request.getSort(),request.getOrder());
     }
 
     @PutMapping("{serviceId}")
