@@ -108,7 +108,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         long id = IdUtil.getSnowflakeNextId();
         return new Service(id, uuid, r.getName(),
                 r.getIntroduction(), r.getKeywords(), r.getPointsPrice(), r.getPictures(), r.getAddress(),
-                1, ServiceStatus.NOT_TAKE_SERVICE.getCode(), r.getCategory());
+                1, ServiceStatus.NOT_TAKE_SERVICE.getCode(), r.getLatitude(), r.getLongitude(), r.getCategory());
     }
 
 

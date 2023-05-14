@@ -42,5 +42,12 @@ public class AddServiceRequest {
 
     @NotNull(message = "服务分类的ID不能为空")
     private Integer category;
-
+    /*
+       2023/5/14 添加; 服务地址的经度
+    */
+    private Double longitude;
+    /*
+       2023/5/14 添加; 服务地址的纬度
+     */
+    private Double latitude;
 }

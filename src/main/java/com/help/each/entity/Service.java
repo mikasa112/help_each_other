@@ -66,6 +66,14 @@ public class Service extends BaseModel {
      */
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Integer status;
+    /*
+           2023/5/14 添加; 服务地址的经度
+     */
+    private Double longitude;
+    /*
+       2023/5/14 添加; 服务地址的纬度
+     */
+    private Double latitude;
 
     /*
     服务的分类
