@@ -1,6 +1,7 @@
 package core
 
 import (
+	"encoding/json"
 	"github.com/gorilla/websocket"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/host"
@@ -8,11 +9,14 @@ import (
 	"log"
 	"net/http"
 	"runtime"
+	"server/internal/core/web"
 	"server/pkg/conf"
+	"server/pkg/logger"
 	"time"
 )
 
 var upgrader = websocket.Upgrader{
+	//跨域
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	}}
@@ -28,12 +32,54 @@ func WebServerStart() {
 
 func webserver(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
+	container := GetContainer()
 	if err != nil {
 		log.Panicf("WebSocket服务启动失败, 启动路径为：%v，错误为: %v",
 			conf.WebConf.Pattern, err)
 	}
 	defer c.Close()
-	Send(c)
+
+	for {
+		msg, err := Read(c)
+		user := User{Conn: c}
+		if err != nil {
+			container.Pop(user)
+			break
+		}
+		switch msg.Type {
+		case web.Register:
+			user.Uuid = msg.Uuid
+			//将client加入队列
+			log.Printf("Register: %v=======>", c.RemoteAddr().String())
+			container.Push(user)
+		case web.Ping:
+			log.Printf("Ping: %v=======>", c.RemoteAddr().String())
+			PONG(c)
+		}
+	}
+}
+
+func PONG(c *websocket.Conn) {
+	err := c.WriteMessage(websocket.TextMessage, []byte("PONG"))
+	log.Printf("Pong: %v <=======", c.RemoteAddr().String())
+	if err != nil {
+		logger.Warnf("pong发送失败: %v", err)
+	}
+}
+
+func Read(c *websocket.Conn) (*web.Message, error) {
+	_, p, err := c.ReadMessage()
+	if err != nil {
+		logger.Errorf("连接异常: %v", err)
+		return nil, err
+	}
+	msg := &web.Message{}
+	err = json.Unmarshal(p, &msg)
+	if err != nil {
+		logger.Warnf("json解析异常: %v", err)
+		return nil, err
+	}
+	return msg, nil
 }
 
 // Send 周期性发送数据

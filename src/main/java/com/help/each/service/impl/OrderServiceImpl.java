@@ -63,7 +63,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .setPay(0);
         //推送订单已接单
         redisTemplate.convertAndSend("order", order);
-        //用户30分钟不接单就取消
+        //用户30分钟不确认就取消
         redisUtil.setObject(ORDER_KEY + order.getOrderId(), order, 30, TimeUnit.MINUTES);
         return ApiResponse.OfStatus(Status.OK);
     }
