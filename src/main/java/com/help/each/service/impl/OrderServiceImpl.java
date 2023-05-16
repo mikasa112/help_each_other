@@ -118,8 +118,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     public ApiResponse getOrdersByUUID(String uuid, Long currentPage, Long pageSize, String sortBy, String order) {
+        //fix 获取和uuid有关的订单
         LambdaQueryWrapper<Order> wrapper = Wrappers.lambdaQuery(Order.class)
-                .eq(Order::getCustomerUuid, uuid);
+                .eq(Order::getCustomerUuid, uuid).or().eq(Order::getProviderUuid,uuid);
         List<Order> orders = PageResult.GetDefaultPageList(orderMapper, wrapper, currentPage, pageSize, sortBy, order);
         return ApiResponse.OfStatus(Status.OK, PageResult.Of(orders, orderMapper.selectCount(wrapper), currentPage, pageSize));
     }
