@@ -47,7 +47,7 @@ public interface OrderService extends IService<Order> {
     ApiResponse getAllOrders(Long currentPage, Long pageSize, String sortBy, String order);
 
     /**
-     * 查询自己的订单
+     * 查询和自己有关的订单
      *
      * @param uuid        用户UUID
      * @param currentPage 当前页

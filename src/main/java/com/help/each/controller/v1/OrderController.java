@@ -1,5 +1,6 @@
 package com.help.each.controller.v1;
 
+import com.help.each.core.dto.OrderConfirmRequest;
 import com.help.each.core.dto.OrderParamRequest;
 import com.help.each.core.dto.PageParamRequest;
 import com.help.each.core.dto.ServiceParamRequest;
@@ -46,7 +47,7 @@ public class OrderController {
     }
 
     @PostMapping("confim")
-    public ApiResponse confimOrder(Authentication authentication, @RequestBody @Valid OrderParamRequest request) {
+    public ApiResponse confimOrder(Authentication authentication, @RequestBody @Valid OrderConfirmRequest request) {
         MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
         String uuid = userDetails.getUser().getUuid();
         return orderService.confimOrder(uuid, request.getOrderId());
