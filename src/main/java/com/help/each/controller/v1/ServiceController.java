@@ -49,7 +49,7 @@ public class ServiceController {
     @GetMapping("/name/{name}")
     //fix 2023/5/13 添加查询顺序和以什么排序
     public ApiResponse indexName(@PathVariable("name") String name, PageParamRequest request) {
-        return service.getServicesName(name, request.getPage(), request.getSize(),request.getSort(),request.getOrder());
+        return service.getServicesName(name, request.getPage(), request.getSize(), request.getSort(), request.getOrder());
     }
 
     @PutMapping("{serviceId}")
@@ -83,6 +83,12 @@ public class ServiceController {
     @GetMapping("/category/{id}")
     public ApiResponse indexCategory(@PathVariable("id") Integer id, PageParamRequest request) {
         return service.getSercices(id, request.getPage(), request.getSize(), request.getSort(), request.getOrder());
+    }
+
+
+    @GetMapping("hot")
+    public ApiResponse hotService() {
+        return service.getHotServices();
     }
 
 }

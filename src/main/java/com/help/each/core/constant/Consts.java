@@ -15,7 +15,7 @@ public interface Consts {
     /*
      * 服务访问次数
      */
-    String SERVICE_VISITED_KEY_PREFIX = "service:visited_count:";
+    String SERVICE_VISITED_KEY_PREFIX = "service:visited_count";
 
     Long DEFAULT_PAGE_SIZE = 10L;
 

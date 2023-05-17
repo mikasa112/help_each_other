@@ -2,9 +2,9 @@ package com.help.each.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.core.constant.Consts;
 import com.help.each.core.constant.Role;
@@ -26,12 +26,14 @@ import com.help.each.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -53,18 +55,22 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     //这个地方使用这个是为了使诸如@CachePut的注解生效
     final ApplicationContext applicationContext;
 
-    private void addVisited(Long serviceId) {
-        String key = Consts.SERVICE_VISITED_KEY_PREFIX + serviceId;
-        Integer i = getVisited(serviceId);
-        if (ObjectUtil.isNull(i)) {
-            i = 0;
-        }
-        redisUtil.setObject(key, i + 1);
+    private static final String SERVICE_KEY = "service";
+
+    private void addVisited(Service service) {
+//        String key = Consts.SERVICE_VISITED_KEY_PREFIX + serviceId;
+//        Integer i = getVisited(serviceId);
+//        if (ObjectUtil.isNull(i)) {
+//            i = 0;
+//        }
+//        redisUtil.setObject(key, i + 1);
+        redisUtil.incrementScore(SERVICE_KEY, service, 1L);
     }
 
-    private Integer getVisited(Long serviceId) {
-        String key = Consts.SERVICE_VISITED_KEY_PREFIX + serviceId;
-        return redisUtil.getObject(key);
+    private Double getVisited(Service service) {
+        return redisUtil.getScoreFromValue(SERVICE_KEY, service);
+//        String key = Consts.SERVICE_VISITED_KEY_PREFIX + serviceId;
+//        return redisUtil.getObject(key);
     }
 
 
@@ -108,7 +114,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         long id = IdUtil.getSnowflakeNextId();
         return new Service(id, uuid, r.getName(),
                 r.getIntroduction(), r.getKeywords(), r.getPointsPrice(), r.getPictures(), r.getAddress(),
-                1, ServiceStatus.NOT_TAKE_SERVICE.getCode(), r.getLongitude(), r.getLatitude(), r.getCategory());
+                1D, ServiceStatus.NOT_TAKE_SERVICE.getCode(), r.getLongitude(), r.getLatitude(), r.getCategory());
     }
 
 
@@ -125,7 +131,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     public ApiResponse getServices(Long currentPage, Long pageSize, String sortBy, String order) {
         ServiceServiceImpl ss = applicationContext.getBean(this.getClass());
         PageResult<Service> pageResult = ss.getServicesWrap(currentPage, pageSize, sortBy, order);
-        List<Service> list = pageResult.getList().stream().map(s -> s.setVisited(getVisited(s.getServiceId()))).toList();
+        List<Service> list = pageResult.getList().stream().map(s -> s.setVisited(getVisited(s))).toList();
         pageResult.setList(list);
         return ApiResponse.OfStatus(Status.OK, pageResult);
     }
@@ -143,7 +149,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     public ApiResponse getSercices(Integer category, Long currentPage, Long pageSize, String sortBy, String order) {
         ServiceServiceImpl ss = applicationContext.getBean(this.getClass());
         PageResult<Service> pageResult = ss.getSercicesWrap(category, currentPage, pageSize, sortBy, order);
-        List<Service> list = pageResult.getList().stream().map(s -> s.setVisited(getVisited(s.getServiceId()))).toList();
+        List<Service> list = pageResult.getList().stream().map(s -> s.setVisited(getVisited(s))).toList();
         pageResult.setList(list);
         return ApiResponse.OfStatus(Status.OK, pageResult);
     }
@@ -187,9 +193,22 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
                                    String order) {
         ServiceServiceImpl ss = applicationContext.getBean(this.getClass());
         PageResult<Service> result = ss.getServicesWrap(uuid, currentPage, pageSize, sortBy, order);
-        List<Service> list = result.getList().stream().map(s -> s.setVisited(getVisited(s.getServiceId()))).toList();
+        List<Service> list = result.getList().stream().map(s -> s.setVisited(getVisited(s))).toList();
         result.setList(list);
         return ApiResponse.OfStatus(Status.OK, result);
+    }
+
+    @Override
+    public ApiResponse getHotServices() {
+        //获取前十个热门元素
+        Set<Object> set = redisUtil.rangeFromZSet(SERVICE_KEY, 0, 9);
+        List<Service> services = new ArrayList<>();
+        set.forEach(s -> {
+            Service temp = JSON.parseObject(s.toString(), Service.class);
+            services.add(temp);
+        });
+        List<Service> list = services.stream().map(s -> s.setVisited(getVisited(s))).toList();
+        return ApiResponse.OfStatus(Status.OK, list);
     }
 
     /*
@@ -205,7 +224,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus);
         List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper, currentPage,
                 pageSize, sortBy, order);
-        List<Service> list = services.stream().map(s -> s.setVisited(getVisited(s.getServiceId()))).toList();
+        List<Service> list = services.stream().map(s -> s.setVisited(getVisited(s))).toList();
         return PageResult.Of(list, count, currentPage, pageSize);
     }
 
@@ -219,8 +238,8 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         ServiceServiceImpl ss = applicationContext.getBean(this.getClass());
         Service service = ss.getServiceWrap(serviceId);
         if (ObjectUtil.isNotNull(service)) {
-            addVisited(serviceId);
-            service.setVisited(getVisited(serviceId));
+            addVisited(service);
+            service.setVisited(getVisited(service));
         }
         return ApiResponse.OfStatus(Status.OK, service);
     }
@@ -228,11 +247,25 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     /*
     包装一下
      */
-    @Cacheable(value = "service", key = "#serviceId")
+//    @Cacheable(value = "service", key = "#serviceId")
+    //2023/5/17 修改为set存储service
     public Service getServiceWrap(Long serviceId) {
-        return mapper.selectOne(Wrappers.lambdaQuery(Service.class).eq(Service::getServiceId, serviceId));
+        Set<Object> set = redisUtil.rangeFromZSet(SERVICE_KEY, 0, -1);
+        AtomicReference<Service> service = new AtomicReference<>();
+        set.forEach(s -> {
+            Service temp = JSON.parseObject(s.toString(), Service.class);
+            if (temp.getServiceId().equals(serviceId))
+                service.set(temp);
+        });
+        if (Objects.isNull(service.get())) {
+            Service selected = mapper.selectOne(Wrappers.lambdaQuery(Service.class).eq(Service::getServiceId, serviceId));
+            if (!Objects.isNull(selected)) {
+                redisUtil.insertValueFromZSet(SERVICE_KEY, selected, 1D);
+                service.set(selected);
+            }
+        }
+        return service.get();
     }
-
 
     /**
      * 获取相似名字的服务列表
@@ -247,7 +280,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     public ApiResponse getServicesName(String name, Long currentPage, Long pageSize, String sortBy, String order) {
         ServiceServiceImpl ss = applicationContext.getBean(this.getClass());
         PageResult<Service> result = ss.getServicesNameWrap(name, currentPage, pageSize, sortBy, order);
-        List<Service> list = result.getList().stream().map(s -> s.setVisited(getVisited(s.getServiceId()))).toList();
+        List<Service> list = result.getList().stream().map(s -> s.setVisited(getVisited(s))).toList();
         result.setList(list);
         return ApiResponse.OfStatus(Status.OK, result);
     }
@@ -273,7 +306,8 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
 
 
     @Override
-    @Caching(evict = @CacheEvict(value = "service", key = "#serviceId"))
+    //fix 2023/5/17 修改手动删除redis
+//    @Caching(evict = @CacheEvict(value = "service", key = "#serviceId"))
     public ApiResponse updateService(Long serviceId, Service service) {
         boolean b = mapper.update(service,
                 Wrappers.lambdaQuery(Service.class)
@@ -281,15 +315,16 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         if (!b) {
             return ApiResponse.OfStatus(Status.SERVICE_UPDATE_FAILED);
         }
+        redisUtil.removeValueFromZSet(SERVICE_KEY, this.getServiceWrap(serviceId));
         return this.getService(serviceId);
     }
 
+    //fix 2023/5/17 修改手动删除redis
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "service", key = "#serviceId"),
+//            @CacheEvict(value = "service", key = "#serviceId"),
             @CacheEvict(value = "service:visited_count", key = "#serviceId")})
     public ApiResponse removeService(String uuid, Long serviceId) {
-
         if (mapper.delete(
                 Wrappers.lambdaQuery(Service.class)
                         .eq(Service::getServiceId, serviceId)) >= 1) {
@@ -298,6 +333,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
             if (Role.USER.equals(user.getRole())) {
                 ServiceServiceImpl serviceImpl = applicationContext.getBean(this.getClass());
                 Service service = serviceImpl.getServiceWrap(serviceId);
+                redisUtil.removeValueFromZSet(SERVICE_KEY, service);
                 //当服务消费者取消/删除服务成功时，系统先将积分还给用户
                 pointsService.addPointRecord(uuid, null, service.getPointsPrice(), Consts.SYS_POINT_REMARK_RETURN);
             }

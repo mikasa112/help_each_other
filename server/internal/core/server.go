@@ -20,7 +20,7 @@ func New() {
 	//启动websocket将服务信息发给前端
 	go WebServerStart()
 	go RedisChannel()
-	go checkContainer()
+	//go checkContainer()
 	logger.Infoln("服务已启动...")
 	distribute()
 	WG.Wait()

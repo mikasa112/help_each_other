@@ -43,6 +43,13 @@ public interface ServiceService extends IService<Service> {
                             String order);
 
     /**
+     * 获取前十热门服务
+     *
+     * @return {@link ApiResponse}
+     */
+    ApiResponse getHotServices();
+
+    /**
      * 获取服务列表
      *
      * @param currentPage 当前页

@@ -57,9 +57,10 @@ public class Service extends BaseModel {
     private String address;
     /*
       服务浏览的次数
+      2023/5/17 fix to Double
      */
     @TableField(exist = false)
-    private Integer visited;
+    private Double visited;
 
     /*
     服务的状态 0:未接单，1:已接单
@@ -80,9 +81,9 @@ public class Service extends BaseModel {
     */
     private Integer category;
 
-    public Integer getVisited() {
+    public Double getVisited() {
         if (Objects.isNull(visited)) {
-            return 0;
+            return 0D;
         }
         return visited;
     }

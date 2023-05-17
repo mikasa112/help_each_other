@@ -211,4 +211,60 @@ public class RedisUtil {
         return rt.keys(pattern);
     }
 
+
+    /**
+     * 向set中插入值
+     *
+     * @param key   K
+     * @param val   V
+     * @param score
+     */
+    public void insertValueFromZSet(final String key, final Object val, double score) {
+        rt.opsForZSet().add(key, val, score);
+    }
+
+    /**
+     * 获得整个set
+     *
+     * @param key   K
+     * @param start 区间开始
+     * @param end   区间结束
+     * @return set
+     */
+    public Set<Object> rangeFromZSet(final Object key, long start, long end) {
+        return rt.opsForZSet().reverseRange(key, start, end);
+    }
+
+
+    /**
+     * 删除set中一个元素
+     *
+     * @param key K
+     * @param val V
+     */
+    public void removeValueFromZSet(final String key, final Object... val) {
+        rt.opsForZSet().remove(key, val);
+    }
+
+    /**
+     * 获取Zet分数
+     *
+     * @param key K
+     * @param val V
+     * @return 分数
+     */
+    public Double getScoreFromValue(final String key, final Object val) {
+        return rt.opsForZSet().score(key, val);
+    }
+
+    /**
+     * ZSet增加分数
+     *
+     * @param key   K
+     * @param val   V
+     * @param delta 分数
+     */
+    public void incrementScore(final String key, Object val, double delta) {
+        rt.opsForZSet().incrementScore(key, val, delta);
+    }
 }
