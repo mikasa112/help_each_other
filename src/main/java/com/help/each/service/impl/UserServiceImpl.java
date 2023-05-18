@@ -9,6 +9,7 @@ import com.help.each.core.constant.Status;
 import com.help.each.core.vo.ApiResponse;
 import com.help.each.core.vo.PageResult;
 import com.help.each.core.vo.UserInfo;
+import com.help.each.entity.MyUserDetails;
 import com.help.each.entity.Order;
 import com.help.each.entity.User;
 import com.help.each.mapper.OrderMapper;
@@ -21,6 +22,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +66,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         AtomicInteger sum = new AtomicInteger();
         AtomicInteger count = new AtomicInteger();
         orders.forEach(e -> {
-            log.info(e.toString());
             count.incrementAndGet();
             com.help.each.entity.Service service = getService(e.getServiceId());
             list.add(service);

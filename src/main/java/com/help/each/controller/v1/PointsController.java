@@ -4,10 +4,12 @@ import com.help.each.core.constant.Consts;
 import com.help.each.core.dto.AddPointsParamRequest;
 import com.help.each.core.dto.PageParamRequest;
 import com.help.each.core.vo.ApiResponse;
+import com.help.each.entity.MyUserDetails;
 import com.help.each.service.PointsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,16 @@ public class PointsController {
     public ApiResponse index(PageParamRequest request) {
         return pointsService.getPointRecords(request.getPage(),
                 request.getSize(), request.getSort(), request.getOrder());
+    }
+
+    /*
+        GET  api/v1/points/mine
+     */
+    @GetMapping("mine")
+    public ApiResponse index(Authentication authentication) {
+        MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+        String uuid = userDetails.getUser().getUuid();
+        return pointsService.getPointByUUID(uuid);
     }
 
     /*

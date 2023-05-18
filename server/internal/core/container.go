@@ -79,8 +79,9 @@ func (c *Container) MatchConn(order internal.Order) (*websocket.Conn, error) {
 	case 1:
 		//通知服务提供者
 		user = c.get(order.ProviderUuid)
-	//已完成
+	//已完成 通知顾客
 	case 2:
+		user = c.get(order.CustomerUuid)
 	//异常
 	case 3:
 	//取消

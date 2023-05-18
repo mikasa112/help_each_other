@@ -37,4 +37,10 @@ public interface PointsService extends IService<Points> {
      * @param order       默认升序
      */
     ApiResponse getPointRecords(Long currentPage, Long pageSize, String sortBy, String order);
+
+    /**
+     * 查询UUID的积分
+     * @param uuid uuid
+     */
+    ApiResponse getPointByUUID(String uuid);
 }

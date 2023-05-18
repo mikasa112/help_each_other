@@ -80,6 +80,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (orderMapper.insert(order) >= 1) {
             //推送订单以确认
             redisTemplate.convertAndSend("order", order);
+            //更新redis中的服务
+            redisUtil.setObject(ORDER_KEY + order.getOrderId(), order);
             //当服务消费者确认一个服务提供者时,更新服务的状态为1（已接单）
             serviceService.updateService(getService(uuid, orderId).getServiceId()
                     , new com.help.each.entity.Service().setStatus(ServiceStatus.TAKE_SERVICE.getCode()));
@@ -90,16 +92,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     public ApiResponse finishOrder(String uuid, Long orderId) {
-        Order order = new Order()
+        Order o = new Order()
                 .setEndAt(LocalDateTime.now())
                 .setStatus(OrderStatus.FINISH.getCode());
-        int update = orderMapper.update(order, Wrappers
+        int update = orderMapper.update(o, Wrappers
                 .lambdaUpdate(Order.class)
                 .eq(Order::getOrderId, orderId));
         if (update >= 1) {
+            Order order = this.getOrder(orderId);
             //更新redis中的order
             redisUtil.setObject(ORDER_KEY + orderId, order);
-            redisUtil.deleteObject(ORDER_KEY + "page");
+//            redisUtil.deleteObject(ORDER_KEY + "page");
             //推送订单已完成
             redisTemplate.convertAndSend("order", order);
             //当服务提供者确认订单完成时,更新服务的状态为2（已完成）
@@ -120,7 +123,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public ApiResponse getOrdersByUUID(String uuid, Long currentPage, Long pageSize, String sortBy, String order) {
         //fix 获取和uuid有关的订单
         LambdaQueryWrapper<Order> wrapper = Wrappers.lambdaQuery(Order.class)
-                .eq(Order::getCustomerUuid, uuid).or().eq(Order::getProviderUuid,uuid);
+                .eq(Order::getCustomerUuid, uuid).or().eq(Order::getProviderUuid, uuid);
         List<Order> orders = PageResult.GetDefaultPageList(orderMapper, wrapper, currentPage, pageSize, sortBy, order);
         return ApiResponse.OfStatus(Status.OK, PageResult.Of(orders, orderMapper.selectCount(wrapper), currentPage, pageSize));
     }
@@ -148,6 +151,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     .getCode().equals(Status.OK.getCode())) {
                 //删除服务提供者的Redis中的信息
                 redisUtil.deleteObject("user:" + o.getProviderUuid());
+                redisUtil.deleteObject("orders:" + orderId);
                 return ApiResponse.OfStatus(Status.OK);
             }
         }

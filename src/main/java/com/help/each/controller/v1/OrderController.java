@@ -1,11 +1,13 @@
 package com.help.each.controller.v1;
 
-import com.help.each.core.dto.OrderConfirmRequest;
+import com.help.each.core.constant.Status;
+import com.help.each.core.dto.OrderIDParamRequest;
 import com.help.each.core.dto.OrderParamRequest;
 import com.help.each.core.dto.PageParamRequest;
 import com.help.each.core.dto.ServiceParamRequest;
 import com.help.each.core.vo.ApiResponse;
 import com.help.each.entity.MyUserDetails;
+import com.help.each.entity.Order;
 import com.help.each.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +49,7 @@ public class OrderController {
     }
 
     @PostMapping("confim")
-    public ApiResponse confimOrder(Authentication authentication, @RequestBody @Valid OrderConfirmRequest request) {
+    public ApiResponse confimOrder(Authentication authentication, @RequestBody @Valid OrderIDParamRequest request) {
         MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
         String uuid = userDetails.getUser().getUuid();
         return orderService.confimOrder(uuid, request.getOrderId());
@@ -61,7 +63,7 @@ public class OrderController {
     }
 
     @PostMapping("finish")
-    public ApiResponse finishOrder(Authentication authentication, @RequestBody @Valid OrderParamRequest request) {
+    public ApiResponse finishOrder(Authentication authentication, @RequestBody @Valid OrderIDParamRequest request) {
         MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
         String uuid = userDetails.getUser().getUuid();
         return orderService.finishOrder(uuid, request.getOrderId());
@@ -72,5 +74,11 @@ public class OrderController {
         MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
         String uuid = userDetails.getUser().getUuid();
         return orderService.removeOrder(uuid, orderId);
+    }
+
+    @GetMapping("{id}")
+    public ApiResponse getOrder(@PathVariable("id") Long orderId) {
+        Order order = orderService.getOrder(orderId);
+        return ApiResponse.OfStatus(Status.OK, order);
     }
 }

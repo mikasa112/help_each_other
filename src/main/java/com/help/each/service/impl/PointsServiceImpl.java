@@ -1,6 +1,8 @@
 package com.help.each.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.help.each.core.constant.Status;
 import com.help.each.core.vo.ApiResponse;
@@ -63,5 +65,12 @@ public class PointsServiceImpl extends ServiceImpl<PointsMapper, Points> impleme
         List<Points> points = PageResult.GetDefaultPageList(pointsMapper, new QueryWrapper<>(), currentPage, pageSize, sortBy, order);
         PageResult<Points> result = PageResult.Of(points, count(), currentPage, pageSize);
         return ApiResponse.OfStatus(Status.OK, result);
+    }
+
+    @Override
+    public ApiResponse getPointByUUID(String uuid) {
+        LambdaQueryWrapper<Points> wrapper = Wrappers.lambdaQuery(Points.class).eq(Points::getUuid, uuid);
+        List<Points> points = pointsMapper.selectList(wrapper);
+        return ApiResponse.OfStatus(Status.OK, points);
     }
 }

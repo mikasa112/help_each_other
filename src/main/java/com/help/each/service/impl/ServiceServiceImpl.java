@@ -162,7 +162,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
         LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class)
                 .eq(Service::getCategory, category);
         Long count = mapper.selectCount(wrapper);
-        List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getPictures, Service::getAddress),
+        List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper,
                 currentPage, pageSize, sortBy, order);
         //fix 修改这个获取到全部长度的bug
         return PageResult.Of(services, count, currentPage, pageSize);
@@ -173,7 +173,8 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     包装一下以便获得visited
      */
     public PageResult<Service> getServicesWrap(Long currentPage, Long pageSize, String sortBy, String order) {
-        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class).select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory, Service::getPictures);
+        LambdaQueryWrapper<Service> wrapper = Wrappers.lambdaQuery(Service.class);
+//                .select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory, Service::getPictures);
         List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper,
                 currentPage, pageSize, sortBy, order);
         return PageResult.Of(services, count(), currentPage, pageSize);
@@ -201,7 +202,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
     @Override
     public ApiResponse getHotServices() {
         //获取前十个热门元素
-        Set<Object> set = redisUtil.rangeFromZSet(SERVICE_KEY, 0, 9);
+        Set<Object> set = redisUtil.rangeFromZSet(SERVICE_KEY, 0, 4);
         List<Service> services = new ArrayList<>();
         set.forEach(s -> {
             Service temp = JSON.parseObject(s.toString(), Service.class);
@@ -221,7 +222,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
                 .eq(Service::getUuid, uuid);
         long count = mapper.selectCount(wrapper);
         //选择查询的字段
-        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus);
+//        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus);
         List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper, currentPage,
                 pageSize, sortBy, order);
         List<Service> list = services.stream().map(s -> s.setVisited(getVisited(s))).toList();
@@ -297,7 +298,7 @@ public class ServiceServiceImpl extends ServiceImpl<ServiceMapper, Service> impl
                 .like(Service::getName, name);
         Long count = mapper.selectCount(wrapper);
         //选择查询的字段 fix:2023/5/13 添加查询字段图片
-        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory, Service::getPictures);
+//        wrapper = wrapper.select(Service::getServiceId, Service::getName, Service::getKeywords, Service::getPointsPrice, Service::getStatus, Service::getCategory, Service::getPictures);
         //fix 2023/5/13添加规则查询
         List<Service> services = PageResult.GetDefaultPageList(mapper, wrapper, currentPage, pageSize, sortBy, order);
 //        mapper.selectPage(page, wrapper);
