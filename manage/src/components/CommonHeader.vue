@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         menuHandler() {
-            var collapse = this.$store.getters.getCollapse;
+            const collapse = this.$store.getters.getCollapse;
             this.$store.commit("setCollapse", !collapse)
         },
         async handleCommand(command) {

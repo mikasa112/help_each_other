@@ -4,6 +4,21 @@
     </div>
 </template>
 
+
+<script>
+// import {getCurrentUser} from "@/api/api";
+
+export default {
+    data() {
+        return {}
+    },
+    // async created() {
+    //     //开局就获得user，怎么说
+    //     let info = await getCurrentUser()
+    //     this.$store.commit("setUser", info.user)
+    // }
+}
+</script>
 <style>
 html,
 body,

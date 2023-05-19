@@ -49,7 +49,7 @@
 
 <script>
 import "animate.css";
-import {getCurrentUser, loginApi} from "@/api/api";
+import {loginApi} from "@/api/api";
 import Vcode from "vue-puzzle-vcode";
 
 export default {

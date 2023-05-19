@@ -1,19 +1,16 @@
 <template xmlns:el-col="http://www.w3.org/1999/html">
-    <el-row>
-        <el-col :span="5">
+    <div class="container">
+        <div class="col">
             <div ref="cpuInfo" class="cpu"></div>
-        </el-col>
-        <el-col :span="5" style="margin-left: 30px">
             <div ref="memoryInfo" class="memory"></div>
-        </el-col>
-        <el-col :span="12" style="margin-left: 30px">
-            <div ref="goroutineInfo" class="goroutines"></div>
-        </el-col>
-    </el-row>
+            <div ref="onlineUserInfo" class="onlineUser"></div>
+        </div>
+    </div>
 </template>
 
 <script>
 import * as echarts from "echarts"
+import {getCurrentUser} from "@/api/api";
 
 export default {
     name: "HomeComponent",
@@ -22,24 +19,38 @@ export default {
             webSocket: null,
             cpuInfo: null,
             memoryInfo: null,
+            onlineUserInfo: null,
+            userLen: [],
+            dateList: [],
         }
     },
     methods: {
         initWebSocket() {
             //初始化weosocket
-            let uri = "ws://192.168.1.106:8082";
+            let uri = "ws://192.168.1.113:8082";
             this.webSocket = new WebSocket(uri);
             this.webSocket.onopen = this.onOpen;
             this.webSocket.onmessage = this.onMessage;
             this.webSocket.onclose = this.onClose;
             this.webSocket.onerror = this.onError;
         },
-        onOpen() {
+        async onOpen() {
             console.log("websocket连接成功")
+            let info = await getCurrentUser()
+            const user = info.user
+            const data = {
+                'type': 0,
+                'UserType': 0,
+                'uuid': user.uuid,
+            }
+            //Register
+            this.webSocket.send(JSON.stringify(data))
         },
         onMessage(e) {
             const serverInfo = JSON.parse(e.data)
             console.log(serverInfo)
+            this.pushList(this.userLen, serverInfo.users.length)
+            this.pushList(this.dateList, this.getDateNow())
             serverInfo["cpuInfo"] = Math.round(serverInfo["cpuInfo"])
             this.cpuInfo.setOption({
                 title: {
@@ -145,20 +156,69 @@ export default {
                     }
                 ]
             })
+            this.onlineUserInfo.setOption({
+                title: {
+                    text: '当前在线用户数量',
+                    left: "center",
+                    textStyle: {
+                        color: '#CCC',
+                        fontFamily: "Microsoft YaHei"
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: this.dateList
+                },
+                yAxis: {
+                    min: 0,
+                    max: 20,
+                    type: 'value',
+                    scale: true,
+                    minInterval: 1,
+                },
+                series: [
+                    {
+                        data: this.userLen,
+                        type: 'line',
+                        label: {
+                            show: true,
+                        },
+                        areaStyle: {}
+                    }
+                ]
+            })
         },
         onClose() {
             console.log("socket closed")
         },
         onError() {
             this.webSocket.close()
+        },
+        pushList(list, data) {
+            if (list.length > 7) {
+                //头删
+                list.shift()
+            }
+            //尾插
+            list.push(data)
+        },
+        getDateNow() {
+            let date = new Date();
+            let hour = date.getHours();
+            let minute = date.getMinutes();
+            let second = date.getSeconds();
+            return hour + ':' + minute + ':' + second
         }
     },
     mounted() {
-        // this.initWebSocket()
+        this.initWebSocket()
         let cpuInfo = this.$refs["cpuInfo"];
         let memoryInfo = this.$refs["memoryInfo"]
+        let onlineUserInfo = this.$refs["onlineUserInfo"]
         this.cpuInfo = echarts.init(cpuInfo);
         this.memoryInfo = echarts.init(memoryInfo);
+        this.onlineUserInfo = echarts.init(onlineUserInfo)
     },
     destroyed() {
         this.webSocket.close()
@@ -167,27 +227,36 @@ export default {
 </script>
 
 <style scoped>
+.container {
+    width: 100%;
+    height: 100%;
+}
+
+.col {
+    display: flex;
+    background-color: white;
+    width: 100%;
+    height: 55%;
+}
+
 .cpu {
     padding: 0;
     margin: 0;
-    width: 300px;
-    height: 300px;
-    background-color: #fff;
+    width: 25%;
+    height: 100%;
 }
 
 .memory {
     padding: 0;
     margin: 0;
-    width: 300px;
-    height: 300px;
-    background-color: #fff;
+    width: 25%;
+    height: 100%;
 }
 
-.goroutines {
+.onlineUser {
     padding: 0;
     margin: 0;
-    width: 743px;
-    height: 300px;
-    background-color: #fff;
+    width: 50%;
+    height: 100%;
 }
 </style>
