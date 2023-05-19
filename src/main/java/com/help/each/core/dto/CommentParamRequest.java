@@ -21,4 +21,9 @@ public class CommentParamRequest {
     @NotNull(message = "评论的服务ID不能为空")
     //评价的服务ID
     private Long serviceId;
+    @NotEmpty(message = "评论者的头像")
+    private String avatar;
+    @NotEmpty(message = "评论者的昵称不能为空")
+    private String nickname;
+
 }

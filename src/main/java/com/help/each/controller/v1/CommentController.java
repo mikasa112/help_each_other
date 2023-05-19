@@ -32,7 +32,7 @@ public class CommentController {
 
     @PostMapping
     public ApiResponse add(@RequestBody @Valid CommentParamRequest request) {
-        return service.addComment(request.getContent(), request.getUuid(), request.getServiceId());
+        return service.addComment(request.getNickname(), request.getContent(), request.getUuid(), request.getServiceId(), request.getAvatar());
     }
 
     @PutMapping("{id}")

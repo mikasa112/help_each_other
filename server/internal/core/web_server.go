@@ -56,6 +56,10 @@ func webserver(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Ping: %v=======>", c.RemoteAddr().String())
 			PONG(c)
 		}
+		//给ADMIN用户主动发服务器信息
+		if msg.UserType == web.ADMIN {
+			Send(user.Conn)
+		}
 	}
 }
 
@@ -86,8 +90,11 @@ func Read(c *websocket.Conn) (*web.Message, error) {
 func Send(conn *websocket.Conn) {
 	serverInfo := ServerInfo()
 	_ = conn.WriteJSON(&serverInfo)
-	t := time.NewTicker(10 * time.Second)
-	defer t.Stop()
+	t := time.NewTicker(5 * time.Second)
+	defer func() {
+		t.Stop()
+		conn.Close()
+	}()
 	for range t.C {
 		serverInfo := ServerInfo()
 		err := conn.WriteJSON(&serverInfo)

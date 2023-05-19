@@ -1,5 +1,6 @@
 package com.help.each.entity;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,10 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class Comment extends BaseModel {
+
+    private String nickname;
+
+    private String avatar;
     //内容
     private String content;
     //评价人的uuid

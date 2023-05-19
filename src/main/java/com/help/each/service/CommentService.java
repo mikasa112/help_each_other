@@ -15,11 +15,13 @@ public interface CommentService extends IService<Comment> {
     /**
      * 添加一条评论
      *
+     * @param nickname 昵称
      * @param content   评论内容
      * @param uuid      uuid
      * @param serviceId 评论的服务id
+     * @param avatar 头像
      */
-    ApiResponse addComment(String content, String uuid, Long serviceId);
+    ApiResponse addComment(String nickname, String content, String uuid, Long serviceId, String avatar);
 
 
     /**

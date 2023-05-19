@@ -31,8 +31,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     final RedisUtil redisUtil;
 
     @Override
-    public ApiResponse addComment(String content, String uuid, Long serviceId) {
-        Comment comment = new Comment(content, uuid, serviceId, 0);
+    public ApiResponse addComment(String nickname, String content, String uuid, Long serviceId, String avatar) {
+        Comment comment = new Comment(nickname, avatar, content, uuid, serviceId, 0);
         if (commentMapper.insert(comment) >= 1) {
             return ApiResponse.OfStatus(Status.OK);
         }
