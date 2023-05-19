@@ -115,10 +115,17 @@ export default {
                     ]
                 },
                 {
-                    path: '/comment',
-                    name: 'comment',
-                    label: '评论管理',
-                    icon: 's-comment',
+                    path: '/points',
+                    name: 'points',
+                    label: '积分管理',
+                    icon: 's-goods',
+                    children: [
+                        {
+                            path: '/points/list',
+                            name: 'pointsList',
+                            label: '积分流水',
+                        }
+                    ],
                 },
             ]
         }

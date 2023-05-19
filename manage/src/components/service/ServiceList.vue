@@ -1,6 +1,6 @@
 <template>
     <el-card class="box-card">
-        <el-table :data="services.list" border class="table"
+        <el-table :data="services" border class="table"
                   highlight-current-row
                   :cell-style="{ textAlign: 'center' }"
                   :header-cell-style="{ textAlign: 'center' }"
@@ -21,16 +21,27 @@
             <el-table-column
                     prop="pointsPrice"
                     label="积分酬劳"
+                    sortable
             ></el-table-column>
             <el-table-column
                     prop="status"
                     label="状态"
+                    sortable
             ></el-table-column>
             <el-table-column
                     prop="visited"
                     label="热度"
+                    sortable
             ></el-table-column>
         </el-table>
+        <el-pagination
+                style="margin-top: 25px"
+                :total="total"
+                @current-change="handleCurrentChange"
+                :page-size="pageSize"
+                layout="total, prev, pager, next, jumper"
+        >
+        </el-pagination>
     </el-card>
 </template>
 
@@ -43,14 +54,36 @@ export default {
         return {
             page: 1,
             pageSize: 10,
-            services: {}
+            services: [],
+            total: 0,
         }
     },
     methods: {
         async getData(params) {
-            this.services = await getServiceList(params)
-            console.log(this.services)
-        }
+            let res = await getServiceList(params)
+            this.total = res.total
+            let category = await getCategories()
+            this.services = res.list.map(item => {
+                let flag = ""
+                category.forEach(i => {
+                    if (i.id === item.category) {
+                        flag = i.category
+                    }
+                })
+                if (item.status === 1) {
+                    item.status = "正在服务"
+                } else if (item.status === 2) {
+                    item.status = "已完成"
+                }
+                item.category = flag
+                return item
+            })
+        },
+        //分页切换到当前页时的回调
+        handleCurrentChange(currentPage) {
+            this.page = currentPage;
+            this.getData(this.params);
+        },
     },
     mounted() {
         this.getData(this.params)
