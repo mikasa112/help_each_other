@@ -27,7 +27,7 @@ export default {
     methods: {
         initWebSocket() {
             //初始化weosocket
-            let uri = "ws://192.168.1.113:8082";
+            let uri = "ws://127.0.0.1:8082";
             this.webSocket = new WebSocket(uri);
             this.webSocket.onopen = this.onOpen;
             this.webSocket.onmessage = this.onMessage;

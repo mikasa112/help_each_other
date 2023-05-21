@@ -3,8 +3,8 @@ import NProgress from "nprogress"
 import 'nprogress/nprogress.css'
 import Vue from "vue";
 
-const baseUrl = "http://192.168.1.113:8080/";
-// const baseUrl = "http://localhost:8080/";
+// const baseUrl = "http://192.168.1.113:8080/";
+const baseUrl = "http://localhost:8080/";
 const Bearer = "Bearer ";
 
 let data = {

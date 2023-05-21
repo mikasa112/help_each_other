@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   servlet:
     multipart:
@@ -46,7 +46,7 @@ app:
   config:
     #每页大小
     #pageSize: 10
-    imageUrl: http://192.168.1.113/images/
+    imageUrl: http://localhost/images/
     jwt:
       #token头
       tokenHeader: Authorization

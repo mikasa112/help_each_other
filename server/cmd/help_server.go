@@ -18,7 +18,7 @@ func init() {
 }
 
 func readBanner() {
-	file, err := os.ReadFile("pkg/conf/banner.txt")
+	file, err := os.ReadFile("./banner.txt")
 	if err != nil {
 		log.Panicf("banner读取错误，错误为: %v", err)
 	}
