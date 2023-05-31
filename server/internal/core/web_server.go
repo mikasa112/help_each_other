@@ -58,7 +58,7 @@ func webserver(w http.ResponseWriter, r *http.Request) {
 		}
 		//给ADMIN用户主动发服务器信息
 		if msg.UserType == web.ADMIN {
-			Send(user.Conn)
+			go Send(user.Conn)
 		}
 	}
 }

@@ -8,8 +8,8 @@ const (
 )
 
 const (
-	ADMIN = iota
-	USER
+	USER = iota
+	ADMIN
 )
 
 // Message websocket 传输协议(自定义)

@@ -70,7 +70,9 @@ export default {
                         flag = i.category
                     }
                 })
-                if (item.status === 1) {
+                if (item.status===0){
+                    item.status="待接单"
+                }else if (item.status === 1) {
                     item.status = "正在服务"
                 } else if (item.status === 2) {
                     item.status = "已完成"
