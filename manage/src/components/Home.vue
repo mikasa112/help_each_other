@@ -22,178 +22,196 @@ export default {
             onlineUserInfo: null,
             userLen: [],
             dateList: [],
+            heartbeatInterval: null,
         }
     },
     methods: {
         initWebSocket() {
             //初始化weosocket
-            let uri = "ws://127.0.0.1:8082";
+            let uri = "ws://123.60.140.200:8082";
+            // let uri = "ws://192.168.1.111:8082";
             this.webSocket = new WebSocket(uri);
             this.webSocket.onopen = this.onOpen;
             this.webSocket.onmessage = this.onMessage;
             this.webSocket.onclose = this.onClose;
             this.webSocket.onerror = this.onError;
         },
+        send(type, userType, uuid, msg) {
+            let data = {
+                type: type,
+                userType: userType,
+                uuid: uuid,
+                msg: msg
+            }
+            if (this.webSocket) {
+                this.webSocket.send(JSON.stringify(data))
+            }
+        },
         async onOpen() {
             console.log("websocket连接成功")
             let info = await getCurrentUser()
             const user = info.user
-            const data = {
-                'type': 0,
-                'UserType': 0,
-                'uuid': user.uuid,
-            }
             //Register
-            this.webSocket.send(JSON.stringify(data))
+            this.send(0, 1, user.uuid)
+            this.heartbeatInterval = setInterval(() => {
+                this.send(1)
+                console.log("Ping----->")
+            }, 5000)
         },
         onMessage(e) {
-            const serverInfo = JSON.parse(e.data)
-            console.log(serverInfo)
-            this.pushList(this.userLen, serverInfo.users.length)
-            this.pushList(this.dateList, this.getDateNow())
-            serverInfo["cpuInfo"] = Math.round(serverInfo["cpuInfo"])
-            this.cpuInfo.setOption({
-                title: {
-                    text: 'CPU使用情况',
-                    left: "center",
-                    textStyle: {
-                        color: '#CCC',
-                        fontFamily: "Microsoft YaHei"
-                    }
-                },
-                series: [
-                    {
-                        type: 'gauge',
-                        progress: {
-                            show: true,
-                            width: 10
-                        },
-                        axisLine: {
-                            lineStyle: {
+            let data = e.data
+            if (data === "PONG") {
+                console.log("<------" + data)
+            } else {
+                const serverInfo = JSON.parse(e.data)
+                console.log(serverInfo)
+                this.pushList(this.userLen, serverInfo.users.length)
+                this.pushList(this.dateList, this.getDateNow())
+                serverInfo["cpuInfo"] = Math.round(serverInfo["cpuInfo"])
+                this.cpuInfo.setOption({
+                    title: {
+                        text: 'CPU使用情况',
+                        left: "center",
+                        textStyle: {
+                            color: '#CCC',
+                            fontFamily: "Microsoft YaHei"
+                        }
+                    },
+                    series: [
+                        {
+                            type: 'gauge',
+                            progress: {
+                                show: true,
                                 width: 10
-                            }
-                        },
-                        axisTick: {
-                            show: false
-                        },
-                        splitLine: {
-                            length: 10,
-                            lineStyle: {
-                                width: 2,
-                                color: '#999'
-                            }
-                        },
-                        axisLabel: {
-                            distance: 20,
-                            color: '#999',
-                            fontSize: 10
-                        },
-                        anchor: {
-                            show: true,
-                            showAbove: true,
-                            size: 20,
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    width: 10
+                                }
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            splitLine: {
+                                length: 10,
+                                lineStyle: {
+                                    width: 2,
+                                    color: '#999'
+                                }
+                            },
+                            axisLabel: {
+                                distance: 20,
+                                color: '#999',
+                                fontSize: 10
+                            },
+                            anchor: {
+                                show: true,
+                                showAbove: true,
+                                size: 20,
+                                itemStyle: {
+                                    borderWidth: 5
+                                }
+                            },
+                            title: {
+                                show: false
+                            },
+                            detail: {
+                                valueAnimation: true,
+                                fontSize: 20,
+                                offsetCenter: [0, '70%']
+                            },
+                            data: [
+                                {
+                                    value: serverInfo["cpuInfo"]
+                                }
+                            ]
+                        }
+                    ]
+                })
+                this.memoryInfo.setOption({
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    title: {
+                        text: '内存使用情况',
+                        left: "center",
+                        textStyle: {
+                            color: '#CCC',
+                            fontFamily: "Microsoft YaHei"
+                        }
+                    },
+                    series: [
+                        {
+                            name: '单位MB',
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            avoidLabelOverlap: false,
                             itemStyle: {
-                                borderWidth: 5
-                            }
-                        },
-                        title: {
-                            show: false
-                        },
-                        detail: {
-                            valueAnimation: true,
-                            fontSize: 20,
-                            offsetCenter: [0, '70%']
-                        },
-                        data: [
-                            {
-                                value: serverInfo["cpuInfo"]
-                            }
-                        ]
-                    }
-                ]
-            })
-            this.memoryInfo.setOption({
-                tooltip: {
-                    trigger: 'item'
-                },
-                title: {
-                    text: '内存使用情况',
-                    left: "center",
-                    textStyle: {
-                        color: '#CCC',
-                        fontFamily: "Microsoft YaHei"
-                    }
-                },
-                series: [
-                    {
-                        name: '单位MB',
-                        type: 'pie',
-                        radius: ['40%', '70%'],
-                        avoidLabelOverlap: false,
-                        itemStyle: {
-                            borderRadius: 10,
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        },
-                        label: {
-                            show: false,
-                            position: 'center'
-                        },
-                        emphasis: {
+                                borderRadius: 10,
+                                borderColor: '#fff',
+                                borderWidth: 2
+                            },
+                            label: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: 40,
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            labelLine: {
+                                show: false
+                            },
+                            data: [
+                                {value: serverInfo["totalMemory"], name: 'total'},
+                                {value: serverInfo["totalMemory"] - serverInfo["usedMemory"], name: 'free'}
+                            ]
+                        }
+                    ]
+                })
+                this.onlineUserInfo.setOption({
+                    title: {
+                        text: '当前在线用户数量',
+                        left: "center",
+                        textStyle: {
+                            color: '#CCC',
+                            fontFamily: "Microsoft YaHei"
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: this.dateList
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 20,
+                        type: 'value',
+                        scale: true,
+                        minInterval: 1,
+                    },
+                    series: [
+                        {
+                            data: this.userLen,
+                            type: 'line',
                             label: {
                                 show: true,
-                                fontSize: 40,
-                                fontWeight: 'bold'
-                            }
-                        },
-                        labelLine: {
-                            show: false
-                        },
-                        data: [
-                            {value: serverInfo["totalMemory"], name: 'total'},
-                            {value: serverInfo["totalMemory"] - serverInfo["usedMemory"], name: 'free'}
-                        ]
-                    }
-                ]
-            })
-            this.onlineUserInfo.setOption({
-                title: {
-                    text: '当前在线用户数量',
-                    left: "center",
-                    textStyle: {
-                        color: '#CCC',
-                        fontFamily: "Microsoft YaHei"
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: this.dateList
-                },
-                yAxis: {
-                    min: 0,
-                    max: 20,
-                    type: 'value',
-                    scale: true,
-                    minInterval: 1,
-                },
-                series: [
-                    {
-                        data: this.userLen,
-                        type: 'line',
-                        label: {
-                            show: true,
-                        },
-                        areaStyle: {}
-                    }
-                ]
-            })
+                            },
+                            areaStyle: {}
+                        }
+                    ]
+                })
+            }
         },
         onClose() {
             console.log("socket closed")
         },
         onError() {
             this.webSocket.close()
+            clearInterval(this.heartbeatInterval)
         },
         pushList(list, data) {
             if (list.length > 7) {
@@ -222,6 +240,8 @@ export default {
     },
     destroyed() {
         this.webSocket.close()
+        clearInterval(this.heartbeatInterval)
+        this.heartbeatInterval = null
     }
 }
 </script>

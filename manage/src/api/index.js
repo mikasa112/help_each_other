@@ -2,9 +2,10 @@ import axios from "axios";
 import NProgress from "nprogress"
 import 'nprogress/nprogress.css'
 import Vue from "vue";
+import JSONBIG from "json-bigint"
 
-// const baseUrl = "http://192.168.1.113:8080/";
-const baseUrl = "http://localhost:8080/";
+const baseUrl = "http://123.60.140.200:8080/";
+// const baseUrl = "http://localhost:8080/";
 const Bearer = "Bearer ";
 
 let data = {
@@ -12,6 +13,16 @@ let data = {
     data: null,
     message: "",
 }
+//解决后端参数在Long或者Double时精度丢失
+axios.defaults.transformResponse = [
+    function (data) {
+        const json = JSONBIG({
+            storeAsString: true
+        })
+        const res = json.parse(data)
+        return res
+    }
+]
 
 export const http = axios.create({
     timeout: 12000,

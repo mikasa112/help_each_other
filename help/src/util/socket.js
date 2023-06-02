@@ -5,7 +5,7 @@ class socket {
 	constructor() {
 		this.socketTask = null
 		// this.url = "ws://127.0.0.1:8082"
-		this.url = "ws://192.168.1.113:8082"
+		this.url = "ws://123.60.140.200:8082"
 		//是否关闭
 		this.isAlive = false
 		this.heartbeatInterval = null
@@ -94,7 +94,7 @@ class socket {
 	send(type, uuid, msg) {
 		let data = {
 			type: type,
-			userType: 1,
+			userType: 0,
 			uuid: uuid,
 			msg: msg
 		}

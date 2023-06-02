@@ -38,7 +38,6 @@ func webserver(w http.ResponseWriter, r *http.Request) {
 			conf.WebConf.Pattern, err)
 	}
 	defer c.Close()
-
 	for {
 		msg, err := Read(c)
 		user := User{Conn: c}

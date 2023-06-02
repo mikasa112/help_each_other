@@ -39,3 +39,5 @@ export const getOrders = params => get(`api/v1/order?${params}`)
 export const getServiceList = params => get(`api/v1/service?${params}`)
 //添加积分
 export const addPoints = params => post("api/v1/points", params)
+//获取积分列表
+export const getPoints=params=>get(`api/v1/points?${params}`)
